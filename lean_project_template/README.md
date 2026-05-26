@@ -14,7 +14,7 @@ coordinate-swap involution and then proves, in Lean:
 3. `top` and `bottom` are exchanged; `both` and `neither` are fixed.
 4. The swap is **not** designation-preserving
    (`demorganSwap_not_designation_preserving`).
-5. The generated automorphism group is Z/2 (`aut_L_is_Z2`).
+5. The identity/swap action is Z/2 as a function-composition action (`aut_L_is_Z2`); the swap is a De Morgan duality, not designation-preserving.
 
 These are the same algebraic facts that the Python implementation in
 `shadowproof_core/bilattice.py` produces at runtime via

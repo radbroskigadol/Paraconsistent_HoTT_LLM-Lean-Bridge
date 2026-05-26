@@ -52,15 +52,3 @@ The model should return:
 ```text
 DraftProposal JSON only
 ```
-
-
-## v0.25.6 configured egress guardrails
-
-`frontier_http` remains a generic buyer-adapter shim. Callers select a configured `provider_id`; they cannot supply provider URLs, headers, or bearer tokens in the request body.
-
-Configured provider URLs are checked in two stages:
-
-1. Literal host checks reject localhost, `.local`, private, loopback, link-local, reserved, multicast, and unspecified IP targets.
-2. DNS names are resolved with Python `socket.getaddrinfo`; every returned address must be public-routable under the same policy. NXDOMAIN, resolver failure, empty results, or unparsable addresses fail closed.
-
-Responses are read through `SHADOWPROOF_MODEL_PROVIDER_RESPONSE_MAX_BYTES` before JSON parsing. Timeouts and retries remain bounded by the request schema and server-side clamps. Production deployments should replace the generic shim with provider-specific adapters for authentication, streaming, redaction, quota, and model-specific response contracts.

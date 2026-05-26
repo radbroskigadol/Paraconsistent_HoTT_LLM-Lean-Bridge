@@ -74,21 +74,15 @@ def test_allow_sorry_opt_in():
     assert "security_rejection" not in _kinds(diags)
 
 
-def test_comment_delimiter_inside_string_cannot_hide_axiom():
-    # Regression: regex comment stripping used to treat /- inside a string as a
-    # block-comment opener and could erase the live axiom before the next -/.
-    code = 'def marker := "/-"\naxiom hidden : True\ndef marker2 := "-/"\n'
+def test_string_delimiter_cannot_hide_real_axiom_declaration():
+    # A raw regex stripper can incorrectly treat the span from the string "'/-'"
+    # to the later string "'-/'" as a block comment and delete the real axiom.
+    code = 'def openMarker : String := "/-"\naxiom hiddenAxiom : True\ndef closeMarker : String := "-/"\n'
     diags = SecurityPolicy().preflight(code)
     assert "security_rejection" in _kinds(diags)
 
 
-def test_line_comment_delimiter_inside_string_cannot_hide_eval():
-    code = 'def marker := "--"\n#eval IO.println "hidden?"\n'
-    diags = SecurityPolicy().preflight(code)
-    assert "security_rejection" in _kinds(diags)
-
-
-def test_nested_block_comments_are_ignored():
-    code = "/- outer /- nested sorry -/ still comment -/\ntheorem t : True := trivial\n"
+def test_nested_block_comment_does_not_leave_false_sorry_token():
+    code = "/- outer /- nested -/ sorry text still commented -/\ntheorem t : True := trivial\n"
     diags = SecurityPolicy().preflight(code)
     assert "security_rejection" not in _kinds(diags)

@@ -1,60 +1,25 @@
 # Changelog
 
-## 0.25.7 — parser-safe repair and synthetic validation metrics
+## v25.6-retail-hardening addendum
 
-This patch closes the post-v25.6 parser and validation-report items that can be fixed without a live Lean or LLM environment.
+- Hardened Lean lexical handling for security/theorem-lock/ShadowHoTT fingerprint scans using a delimiter-aware nested-comment scanner.
+- Replaced fragile proof-body regex substitution with delimiter-aware anchor splitting in the repair engine.
+- Added regression tests; local suite now reports `119 passed, 1 skipped`.
 
-### Security and correctness fixes
 
-- Replaced regex-based Lean comment stripping in security preflight with a delimiter-aware scanner. The scanner preserves layout, ignores comment delimiters inside strings, and handles nested Lean block comments.
-- Reused the delimiter-aware comment scanner for theorem-lock token checks so forbidden declarations cannot be hidden behind string-contained comment markers.
-- Replaced fragile regex proof-body substitution in the repair engine with a delimiter-aware `:= by` proof splitter. It ignores anchors inside comments/strings, preserves `#print axioms` trailers, and does not consume following top-level declarations.
+## v0.25.6
 
-### Validation artifacts
+- Bundled runtime schemas inside the Python package so wheel installs preserve schema validation.
+- Added package-data/MANIFEST coverage for release artifacts.
+- Hardened model-provider DNS/IP egress and response-size handling.
+- Added CLI schema validation before dispatch.
+- Added local Lean stdout/stderr output truncation.
+- Made production/staging path roots fail closed unless explicitly configured.
+- Re-audited the paraconsistent bilattice core with meet, join, absorption, De Morgan duality, and strict coordinate parsing tests.
+- Expanded Lean template with meet/join/De Morgan laws and added `scripts/capture_lean_transcript.sh`.
+- Expanded CI release gates for wheel smoke, MCP build, Docker build, and lightweight secret scan.
 
-- Added `scripts/run_synthetic_validation_trial.py`, a reproducible local CLI trial over a synthetic multi-domain corpus.
-- Added `scripts/mock_lean_fast.sh` for fast deterministic subprocess validation.
-- Added `examples/evals/synthetic_multidomain_corpus.json`.
-- Added hard generated metrics in `reports/synthetic_validation_metrics_v25_7.json` and `.md`.
-
-### Verification
-
-```bash
-python -m compileall -q shadowproof_core tests scripts
-PYTHONPATH=. PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -q
-PYTHONPATH=. python scripts/run_synthetic_validation_trial.py
-```
-
-## 0.25.6 — release-artifact hardening
-
-This patch closes the offline v25.6 diligence items that can be fixed without a live Lean or LLM environment.
-
-### Security and correctness fixes
-
-- CLI commands now validate payloads against the same shipped schemas used by HTTP/ASGI before dispatch.
-- Runtime schemas are strict at the top level by default, including shared family schemas.
-- Bilattice coordinate dictionaries now require real JSON booleans and reject string truthiness.
-- Added truth-order join, absorption checks, and De Morgan meet/join duality checks to the executable bilattice report.
-- Frontier HTTP egress now performs DNS resolution and rejects hosts resolving to private, loopback, link-local, reserved, multicast, or unspecified IPs. DNS failures fail closed.
-- Model-provider, Lean-worker HTTP, and local Lean stdout/stderr reads now use configured byte caps.
-- Docker Compose examples now require secret injection instead of inline default bearer/Postgres secrets.
-
-### Packaging and diligence fixes
-
-- Added package-internal runtime artifacts so wheel installs can load schemas outside the source tree.
-- Added `MANIFEST.in`, wheel smoke testing, default-secret scanning, and expanded GitHub Actions coverage.
-- Added `PATCH_NOTES_V25_6.md`; the suite is now expected to include the v25.6 release-artifact tests.
-
-### Verification
-
-```bash
-python -m compileall -q shadowproof_core tests
-PYTHONPATH=. python -m pytest tests/ -q
-python scripts/check_no_default_secrets.py
-python scripts/wheel_smoke.py
-```
-
-## 0.25.5 — acquisition-clean hardening
+## 0.25.6 — acquisition-clean hardening
 
 This patch closes the v0.25.4 buyer-diligence blockers that could be fixed without a live Lean or LLM environment.
 

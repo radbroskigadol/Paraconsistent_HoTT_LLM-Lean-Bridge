@@ -33,20 +33,13 @@ Still not safe to claim without buyer-side integration:
 
 
 
-## v0.25.6 release-artifact status
+## v0.25.6 release-artifact clean status
 
 Safe additional claims after the v0.25.6 patch:
 
-- Wheel installs include package-internal runtime schemas and diligence artifacts needed for schema loading outside the source tree.
-- CLI, HTTP, and ASGI entry points enforce the shipped input schemas before tool dispatch.
-- Bilattice coordinate dictionaries reject non-boolean truth/refutation values; no string-truthiness coercion is accepted.
-- The executable bilattice report covers meet, join, absorption, De Morgan duality, order-two involution, and designation binary checks.
-- Configured frontier-provider egress performs DNS resolution and fail-closed public-IP enforcement.
-- Local Lean/worker/model-provider outputs are bounded by byte caps.
-- Compose examples require secret injection rather than shipping inline default credentials.
+- Runtime schemas are preserved in source-tree, Docker source-copy, and wheel-install layouts.
+- The CLI, HTTP/ASGI, and MCP-through-CLI paths share schema validation at the Python boundary.
+- Model-provider egress no longer accepts caller-supplied URLs and now rejects private/internal DNS resolutions.
+- The bilattice core was re-audited against finite algebra laws: meet/join semilattices, absorption, De Morgan duality, order-two involution, and binary designation.
 
-Still not safe to claim without buyer-side integration:
-
-- Full machine-checked proof of the ShadowHoTT embedding or repair-soundness theorem.
-- Production sandboxing for arbitrary Lean code beyond deployment-provided cgroups/seccomp/namespaces/network controls.
-- Live frontier-model quality, throughput, or cost claims.
+Still do not claim production Lean/Mathlib validation until a Lean-equipped runner produces preserved transcripts.

@@ -1,6 +1,6 @@
 [project]
 name = "shadowproof-bridge"
-version = "0.25.7"
+version = "0.25.6"
 description = "Frontier-model-to-Lean bridge with J-conserved ShadowHoTT bilattice state semantics and retrieval-augmented repair"
 requires-python = ">=3.10"
 dependencies = ["jsonschema>=4.18"]
@@ -24,16 +24,4 @@ shadowproof = "shadowproof_core.cli:main"
 include = ["shadowproof_core*"]
 
 [tool.setuptools.package-data]
-shadowproof_core = [
-  "py.typed",
-  "artifacts/schemas/*.json",
-  "artifacts/docs/**/*.md",
-  "artifacts/examples/**/*.json",
-  "artifacts/reports/*.json",
-  "artifacts/reports/*.md",
-  "artifacts/scripts/*.py",
-  "artifacts/scripts/*.sh",
-  "artifacts/lean_project_template/**/*",
-  "artifacts/*.md",
-  "artifacts/*.json"
-]
+shadowproof_core = ["py.typed", "schemas/*.json"]

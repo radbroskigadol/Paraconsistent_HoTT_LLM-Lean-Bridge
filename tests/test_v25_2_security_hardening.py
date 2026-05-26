@@ -81,3 +81,16 @@ def test_path_guard_rejects_absolute_escape(tmp_path, monkeypatch):
     assert resolve_under_allowed_root(str(inside)) == inside.resolve()
     with pytest.raises(PathPolicyError):
         resolve_under_allowed_root("/etc/passwd", kind="escape")
+
+
+def test_theorem_lock_string_delimiter_cannot_hide_sorry_or_axiom():
+    from shadowproof_core.models import TheoremFingerprint
+
+    fp = TheoremFingerprint(
+        theorem_family="security_probe",
+        forbidden_drift=["axiom", "sorry"],
+    )
+    code = 'def openMarker : String := "/-"\naxiom hiddenAxiom : True\ntheorem t : True := by sorry\ndef closeMarker : String := "-/"\n'
+    kinds = {d.kind.value if hasattr(d.kind, "value") else str(d.kind) for d in fp.diff_summary(code)}
+    assert "axiom_leak" in kinds
+    assert "sorry_leak" in kinds

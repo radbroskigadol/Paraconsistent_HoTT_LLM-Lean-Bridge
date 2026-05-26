@@ -11,7 +11,6 @@ from typing import Any
 from urllib import request as urlrequest
 
 from .config import ShadowProofConfig
-from .io_limits import capped_read_bytes, read_text_file_capped
 
 
 @dataclass
@@ -43,35 +42,28 @@ def run_lean_worker_local(code: str, cfg: ShadowProofConfig, request_id: str) ->
         path.write_text(code, encoding="utf-8")
         cmd = shlex.split(cfg.lean_command) + [str(path)]
         try:
-            out_path = Path(td) / "stdout.txt"
-            err_path = Path(td) / "stderr.txt"
-            with out_path.open("wb") as out_f, err_path.open("wb") as err_f:
-                proc = subprocess.run(
-                    cmd,
-                    cwd=td,
-                    stdout=out_f,
-                    stderr=err_f,
-                    timeout=cfg.lean_timeout_seconds,
-                )
+            proc = subprocess.run(
+                cmd,
+                cwd=td,
+                capture_output=True,
+                text=True,
+                timeout=cfg.lean_timeout_seconds,
+            )
             elapsed = int((time.monotonic() - start) * 1000)
-            stdout = read_text_file_capped(out_path, cfg.lean_output_max_bytes)
-            stderr = read_text_file_capped(err_path, cfg.lean_output_max_bytes)
             lean_status = "accepted" if proc.returncode == 0 else "rejected"
             return LeanWorkerResult(
                 status="ok" if proc.returncode == 0 else "needs_repair",
                 lean_status=lean_status,
-                stdout=stdout,
-                stderr=stderr,
+                stdout=proc.stdout,
+                stderr=proc.stderr,
                 elapsed_ms=elapsed,
                 exit_code=proc.returncode,
                 worker_mode="local",
-                diagnostics=parse_basic_lean_diagnostics(stderr),
+                diagnostics=parse_basic_lean_diagnostics(proc.stderr),
             )
-        except subprocess.TimeoutExpired:
+        except subprocess.TimeoutExpired as e:
             elapsed = int((time.monotonic() - start) * 1000)
-            stdout = read_text_file_capped(Path(td) / "stdout.txt", cfg.lean_output_max_bytes) if (Path(td) / "stdout.txt").exists() else ""
-            stderr = read_text_file_capped(Path(td) / "stderr.txt", cfg.lean_output_max_bytes) if (Path(td) / "stderr.txt").exists() else ""
-            return LeanWorkerResult("timeout", "timeout", stdout, stderr, elapsed, None, "local", [
+            return LeanWorkerResult("timeout", "timeout", e.stdout or "", e.stderr or "", elapsed, None, "local", [
                 {"severity": "error", "kind": "timeout", "message": f"Lean timed out after {cfg.lean_timeout_seconds}s"}
             ])
         except Exception as e:
@@ -89,7 +81,7 @@ def run_lean_worker_http(code: str, cfg: ShadowProofConfig, request_id: str) -> 
     req = urlrequest.Request(cfg.lean_worker_url.rstrip("/") + "/check", data=payload, headers={"Content-Type": "application/json"})
     try:
         with urlrequest.urlopen(req, timeout=cfg.lean_timeout_seconds + 5) as resp:
-            raw = json.loads(capped_read_bytes(resp, cfg.lean_worker_response_max_bytes).decode("utf-8"))
+            raw = json.loads(resp.read().decode("utf-8"))
         elapsed = int((time.monotonic() - start) * 1000)
         return LeanWorkerResult(
             status=raw.get("status", "unknown"),

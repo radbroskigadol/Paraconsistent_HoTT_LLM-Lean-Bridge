@@ -3,8 +3,8 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
+from .lean_lex import strip_lean_comments_for_policy
 from .models import Diagnostic, DiagnosticSeverity, ObstructionKind, SecurityLevel
-from .lean_text import strip_lean_comments
 
 
 @dataclass
@@ -67,10 +67,10 @@ class SecurityPolicy:
 
 
 def strip_comments(code: str) -> str:
-    """Strip Lean comments for policy preflight without regex parsing.
+    """Return Lean code with comments/string literals masked for policy scans.
 
-    Delegates to the delimiter-aware scanner in ``lean_text`` so comment
-    delimiters inside strings cannot hide live code, and nested Lean block
-    comments are handled correctly.
+    This is delimiter-aware: nested ``/- -/`` comments are handled, and comment
+    delimiters inside Lean strings/chars cannot hide real declarations.  The
+    historical name is kept for API compatibility with tests and callers.
     """
-    return strip_lean_comments(code, preserve_layout=True)
+    return strip_lean_comments_for_policy(code)

@@ -46,9 +46,6 @@ class ShadowProofConfig:
     model_provider_url: str | None = None
     model_provider_urls_env: str = "SHADOWPROOF_MODEL_PROVIDER_URLS"
     model_provider_bearer_token_env: str = "SHADOWPROOF_MODEL_PROVIDER_BEARER_TOKEN"
-    model_provider_response_max_bytes: int = 2_000_000
-    lean_output_max_bytes: int = 200_000
-    lean_worker_response_max_bytes: int = 1_000_000
     policy_path: str = ".shadowproof_opt/policies.json"
     domain_dirs: tuple[str, ...] = ("domains",)
     enable_admin_http: bool = False
@@ -109,9 +106,6 @@ class ShadowProofConfig:
             model_provider_url=os.environ.get("SHADOWPROOF_MODEL_PROVIDER_URL"),
             model_provider_urls_env=os.environ.get("SHADOWPROOF_MODEL_PROVIDER_URLS_ENV", "SHADOWPROOF_MODEL_PROVIDER_URLS"),
             model_provider_bearer_token_env=os.environ.get("SHADOWPROOF_MODEL_PROVIDER_BEARER_TOKEN_ENV", "SHADOWPROOF_MODEL_PROVIDER_BEARER_TOKEN"),
-            model_provider_response_max_bytes=int_env("SHADOWPROOF_MODEL_PROVIDER_RESPONSE_MAX_BYTES", 2_000_000),
-            lean_output_max_bytes=int_env("SHADOWPROOF_LEAN_OUTPUT_MAX_BYTES", 200_000),
-            lean_worker_response_max_bytes=int_env("SHADOWPROOF_LEAN_WORKER_RESPONSE_MAX_BYTES", 1_000_000),
             policy_path=os.environ.get("SHADOWPROOF_OPT_POLICY_PATH", ".shadowproof_opt/policies.json"),
             domain_dirs=domain_dirs or ("domains",),
             enable_admin_http=bool_env("SHADOWPROOF_ENABLE_ADMIN_HTTP", False),

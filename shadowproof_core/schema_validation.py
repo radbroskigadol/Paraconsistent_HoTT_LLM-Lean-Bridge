@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import copy
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -11,29 +10,41 @@ class SchemaValidationError(ValueError):
     pass
 
 
-PROJECT_SCHEMA_DIR = Path(__file__).resolve().parents[1] / "schemas"
-PACKAGED_SCHEMA_DIR = Path(__file__).resolve().parent / "artifacts" / "schemas"
+PACKAGE_SCHEMA_DIR = Path(__file__).resolve().parent / "schemas"
+ROOT_SCHEMA_DIR = Path(__file__).resolve().parents[1] / "schemas"
 
 
-def _active_schema_dir() -> Path:
-    """Return the schema directory for source-tree or wheel installs.
+def _schema_dirs() -> tuple[Path, ...]:
+    """Runtime schema search path.
 
-    Source checkouts keep schemas at the repository root.  Wheels ship a
-    package-internal copy under ``shadowproof_core/artifacts/schemas`` so CLI,
-    HTTP, and ASGI validation still work after installation outside the source
-    tree.
+    Package schemas are authoritative in installed wheels.  The repository-level
+    ``schemas/`` directory is kept as a source-tree fallback so editable/dev
+    checkouts and older Docker layouts remain compatible.
     """
-    if PROJECT_SCHEMA_DIR.exists():
-        return PROJECT_SCHEMA_DIR
-    return PACKAGED_SCHEMA_DIR
+    dirs: list[Path] = []
+    for candidate in (PACKAGE_SCHEMA_DIR, ROOT_SCHEMA_DIR):
+        if candidate.exists() and candidate not in dirs:
+            dirs.append(candidate)
+    return tuple(dirs)
 
 
-SCHEMA_DIR = _active_schema_dir()
-DESCRIPTOR_FILE = SCHEMA_DIR / "openai_mcp_tool_descriptors.json"
+def _first_existing_schema_file(filename: str) -> Path | None:
+    for schema_dir in _schema_dirs():
+        path = schema_dir / filename
+        if path.exists():
+            return path
+    return None
+
+
+def _read_schema_file(filename: str) -> dict[str, Any] | None:
+    path = _first_existing_schema_file(filename)
+    if path is None:
+        return None
+    return json.loads(path.read_text(encoding="utf-8"))
 
 # The runtime dispatch key is the concrete tool name.  Most schemas are named
 # exactly that way.  A small number are intentionally shared family schemas;
-# this map lets the HTTP/ASGI boundary enforce those contracts instead of
+# this map lets the HTTP/ASGI/CLI boundaries enforce those contracts instead of
 # silently treating the tool as unvalidated.
 _SCHEMA_ALIASES: dict[str, str] = {
     "shadowproof_shadowhott_audit": "shadowproof_shadowhott_state",
@@ -97,37 +108,14 @@ _COMMERCIAL_SCHEMA_TOOLS = frozenset({
 })
 
 
-def _schema_path(schema_name: str) -> Path:
-    return _active_schema_dir() / f"{schema_name}.input.schema.json"
-
-
-def _descriptor_file() -> Path:
-    return _active_schema_dir() / "openai_mcp_tool_descriptors.json"
-
-
-def _strict_top_level_schema(schema: dict[str, Any]) -> dict[str, Any]:
-    """Return a copy with strict top-level properties unless explicitly opted out.
-
-    Legacy/family schemas used to leave ``additionalProperties`` open.  v25.6
-    makes strict top-level payloads the default for all routed tools while
-    preserving each schema's documented fields.  Nested objects remain governed
-    by their own schema declarations so extensible records such as diagnostics
-    can stay forward-compatible where the schema says so.
-    """
-    if schema.get("type") != "object":
-        return schema
-    out = copy.deepcopy(schema)
-    out["additionalProperties"] = False
-    return out
+def _schema_filename(schema_name: str) -> str:
+    return f"{schema_name}.input.schema.json"
 
 
 @lru_cache(maxsize=1)
 def descriptor_input_schemas() -> dict[str, dict[str, Any]]:
     """Return OpenAI/MCP inline input schemas keyed by concrete tool name."""
-    descriptor_file = _descriptor_file()
-    if not descriptor_file.exists():
-        return {}
-    raw = json.loads(descriptor_file.read_text(encoding="utf-8"))
+    raw = _read_schema_file("openai_mcp_tool_descriptors.json")
     if not isinstance(raw, list):
         return {}
     out: dict[str, dict[str, Any]] = {}
@@ -146,18 +134,18 @@ def schema_for_tool(tool_name: str) -> dict[str, Any] | None:
     """Find the strongest local input schema available for a tool.
 
     Resolution order:
-      1. Exact file: schemas/{tool_name}.input.schema.json.
+      1. Exact packaged/source file: schemas/{tool_name}.input.schema.json.
       2. Inline OpenAI/MCP descriptor schema for buyer-facing tools.
       3. Explicit/family aliases for grouped tools.
       4. Generic commercial/enterprise envelope schemas.
     """
-    exact = _schema_path(tool_name)
-    if exact.exists():
-        return _strict_top_level_schema(json.loads(exact.read_text(encoding="utf-8")))
+    exact = _read_schema_file(_schema_filename(tool_name))
+    if exact is not None:
+        return exact
 
     descriptor_schema = descriptor_input_schemas().get(tool_name)
     if descriptor_schema is not None:
-        return _strict_top_level_schema(descriptor_schema)
+        return descriptor_schema
 
     alias = _SCHEMA_ALIASES.get(tool_name)
     if alias:
@@ -167,19 +155,19 @@ def schema_for_tool(tool_name: str) -> dict[str, Any] | None:
 
     for prefix, schema_name in _PREFIX_ALIASES:
         if tool_name.startswith(prefix):
-            path = _schema_path(schema_name)
-            if path.exists():
-                return _strict_top_level_schema(json.loads(path.read_text(encoding="utf-8")))
+            schema = _read_schema_file(_schema_filename(schema_name))
+            if schema is not None:
+                return schema
 
     if tool_name in _ENTERPRISE_SCHEMA_TOOLS:
-        path = _schema_path("shadowproof_enterprise")
-        if path.exists():
-            return _strict_top_level_schema(json.loads(path.read_text(encoding="utf-8")))
+        schema = _read_schema_file(_schema_filename("shadowproof_enterprise"))
+        if schema is not None:
+            return schema
 
     if tool_name in _COMMERCIAL_SCHEMA_TOOLS:
-        path = _schema_path("shadowproof_commercial")
-        if path.exists():
-            return _strict_top_level_schema(json.loads(path.read_text(encoding="utf-8")))
+        schema = _read_schema_file(_schema_filename("shadowproof_commercial"))
+        if schema is not None:
+            return schema
 
     return None
 
@@ -195,10 +183,6 @@ def validate_tool_payload(tool_name: str, payload: dict[str, Any]) -> list[str]:
     schema = schema_for_tool(tool_name)
     if schema is None:
         return []
-    # Authentication/routing metadata is handled by the server before/after
-    # validation and is intentionally not part of every tool-specific schema.
-    # Validate a copy without those top-level fields so bearer-token and tenant
-    # workflows are not broken by strict per-tool schemas.
     validation_payload = dict(payload)
     for meta_key in ("tenant_id", "user_id", "authorization", "bearer_token", "admin_bearer_token", "admin_authorization"):
         validation_payload.pop(meta_key, None)

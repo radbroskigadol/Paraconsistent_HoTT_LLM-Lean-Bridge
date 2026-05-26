@@ -3,7 +3,7 @@
 # This compose file is intended for a developer or buyer running a local
 # walkthrough. It is NOT a production deployment template. In particular:
 #   - No TLS termination (front this with nginx/Caddy/cloud LB).
-#   - No secrets manager is bundled; inject credentials through .env, Docker secrets, or your platform secret manager.
+#   - No secrets manager (DEV-ONLY bearer token is set inline).
 #   - The Lean worker container only has a Lean toolchain after the operator
 #     builds it; the image stub below installs nothing so the bridge will
 #     report lean_status=not_available until you replace the worker image.
@@ -23,14 +23,14 @@ services:
       SHADOWPROOF_ENVIRONMENT: production
       SHADOWPROOF_AUTH_MODE: bearer
       SHADOWPROOF_TENANT_MODE: single_tenant
-      SHADOWPROOF_BEARER_TOKENS: "${SHADOWPROOF_BEARER_TOKENS:?set bearer tokens through .env or secret manager}"
+      SHADOWPROOF_BEARER_TOKENS: "dev-token:default"
       SHADOWPROOF_ENABLE_ADMIN_HTTP: "false"
       SHADOWPROOF_ALLOWED_FILE_ROOTS: "/app,/tmp/shadowproof_data"
       SHADOWPROOF_DATA_DIR: "/tmp/shadowproof_data"
       SHADOWPROOF_QUOTA_MODE: redis
       SHADOWPROOF_REDIS_URL: "redis://redis:6379/0"
       SHADOWPROOF_STORAGE_BACKEND: postgres
-      SHADOWPROOF_POSTGRES_DSN: "${SHADOWPROOF_POSTGRES_DSN:?set postgres DSN through .env or secret manager}"
+      SHADOWPROOF_POSTGRES_DSN: "postgresql://shadow:shadow@postgres:5432/shadow"
       SHADOWPROOF_LEAN_WORKER_MODE: http
       SHADOWPROOF_LEAN_WORKER_URL: "http://lean-worker:9001"
       SHADOWPROOF_METRICS_ENABLED: "true"
@@ -57,7 +57,7 @@ services:
       - no-new-privileges:true
     environment:
       POSTGRES_USER: shadow
-      POSTGRES_PASSWORD: "${SHADOWPROOF_POSTGRES_PASSWORD:?set postgres password through .env or secret manager}"
+      POSTGRES_PASSWORD: shadow
       POSTGRES_DB: shadow
     volumes:
       - sp_pg:/var/lib/postgresql/data

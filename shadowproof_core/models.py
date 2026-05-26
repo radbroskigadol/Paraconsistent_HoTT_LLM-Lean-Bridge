@@ -6,7 +6,7 @@ from enum import Enum
 from typing import Any, Optional
 
 from .bilattice import BilatticeValue, TOP_L, BOTTOM_L, BOTH_L, NEITHER_L
-from .lean_text import strip_lean_comments
+from .lean_lex import strip_lean_comments_for_policy
 
 
 class ToolStatus(str, Enum):
@@ -351,10 +351,11 @@ def enum_clean(value: Any) -> Any:
 
 
 def strip_lean_comments_for_fingerprint(code: str) -> str:
-    """Strip Lean comments for theorem-lock token checks.
+    """Mask Lean comments and literal contents for theorem-lock token checks.
 
-    This intentionally allows ``#print axioms`` while still detecting actual
-    axiom declarations, and uses the same delimiter-aware scanner as security
-    preflight to avoid hiding live code with comment markers inside strings.
+    This intentionally allows the audit command ``#print axioms`` while still
+    detecting actual ``axiom`` declarations.  It is delimiter-aware, so string
+    literals containing ``/-`` or ``-/`` cannot hide a real declaration from the
+    theorem lock.
     """
-    return strip_lean_comments(code, preserve_layout=True)
+    return strip_lean_comments_for_policy(code)

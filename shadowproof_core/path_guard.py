@@ -13,6 +13,9 @@ def allowed_roots() -> list[Path]:
     raw = os.environ.get("SHADOWPROOF_ALLOWED_FILE_ROOTS", "")
     parts = [p.strip() for p in raw.split(",") if p.strip()]
     if not parts:
+        env = os.environ.get("SHADOWPROOF_ENVIRONMENT", "development").strip().lower()
+        if env in {"production", "prod", "staging"}:
+            raise PathPolicyError("SHADOWPROOF_ALLOWED_FILE_ROOTS must be explicitly set in production/staging")
         parts = [os.getcwd()]
     roots: list[Path] = []
     for p in parts:

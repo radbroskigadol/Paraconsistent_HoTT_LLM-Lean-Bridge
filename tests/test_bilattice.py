@@ -46,10 +46,39 @@ def test_meet_is_commutative_associative_idempotent():
                 assert a.meet(b).meet(c) == a.meet(b.meet(c))
 
 
-def test_top_is_meet_identity():
+def test_join_is_commutative_associative_idempotent():
+    for a in L_VALUES:
+        assert a.join(a) == a
+        for b in L_VALUES:
+            assert a.join(b) == b.join(a)
+            for c in L_VALUES:
+                assert a.join(b).join(c) == a.join(b.join(c))
+
+
+def test_meet_join_absorption_laws():
+    for a in L_VALUES:
+        for b in L_VALUES:
+            assert a.meet(a.join(b)) == a
+            assert a.join(a.meet(b)) == a
+
+
+def test_demorgan_duality_laws():
+    for a in L_VALUES:
+        for b in L_VALUES:
+            assert a.meet(b).involution() == a.involution().join(b.involution())
+            assert a.join(b).involution() == a.involution().meet(b.involution())
+
+
+def test_top_and_bottom_are_meet_join_identity_and_zero():
     for v in L_VALUES:
         assert TOP_L.meet(v) == v
         assert v.meet(TOP_L) == v
+        assert BOTTOM_L.meet(v) == BOTTOM_L
+        assert v.meet(BOTTOM_L) == BOTTOM_L
+        assert BOTTOM_L.join(v) == v
+        assert v.join(BOTTOM_L) == v
+        assert TOP_L.join(v) == TOP_L
+        assert v.join(TOP_L) == TOP_L
 
 
 def test_designation_is_truth_coordinate():
@@ -96,6 +125,11 @@ def test_runtime_axiom_report_passes():
     assert rep["all_passed"] is True
     assert rep["involution_order_two"] is True
     assert rep["composition_meet_associative"] is True
+    assert rep["join_associative"] is True
+    assert rep["absorption_laws"] is True
+    assert rep["demorgan_duality"] is True
+    assert rep["meet_identity_top_zero_bottom"] is True
+    assert rep["join_identity_bottom_zero_top"] is True
     assert rep["refl_label_top"] is True
     assert rep["designation_binary"] is True
     assert sorted(rep["involution_fixed_points"]) == ["both", "neither"]
@@ -106,3 +140,12 @@ def test_from_label_handles_string_dict_and_value():
     assert BilatticeValue.from_label({"label": "bottom"}) == BOTTOM_L
     assert BilatticeValue.from_label({"truth_coordinate": True, "refutation_coordinate": True}) == BOTH_L
     assert BilatticeValue.from_label(NEITHER_L) is NEITHER_L
+
+
+def test_coordinate_dicts_require_real_json_booleans():
+    try:
+        BilatticeValue.from_label({"truth_coordinate": "false", "refutation_coordinate": False})
+    except ValueError as exc:
+        assert "truth_coordinate" in str(exc)
+    else:  # pragma: no cover
+        raise AssertionError("string coordinates must not be truthiness-coerced")

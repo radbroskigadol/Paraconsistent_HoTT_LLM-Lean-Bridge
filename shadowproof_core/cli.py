@@ -10,12 +10,13 @@ from .schema_validation import validate_tool_payload
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="ShadowProof Bridge v25.7 Validation-Hardened Package")
+    parser = argparse.ArgumentParser(description="ShadowProof Bridge v25.6 Pre-Commercial Package")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     def add_json_cmd(name: str, help_text: str):
         p = sub.add_parser(name, help=help_text)
         p.add_argument("json_file", type=Path)
+        p.add_argument("--no-schema-validation", action="store_true", help="Disable CLI JSON Schema validation for local debugging only.")
         return p
 
     commands = {
@@ -136,15 +137,11 @@ def main() -> None:
 
     tool_name = commands[args.cmd][0]
     payload = json.loads(args.json_file.read_text(encoding="utf-8"))
-    schema_errors = validate_tool_payload(tool_name, payload)
-    if schema_errors:
-        print(dumps_response({
-            "status": "error",
-            "error": "schema_validation_failed",
-            "tool": tool_name,
-            "diagnostics": schema_errors,
-        }))
-        raise SystemExit(2)
+    if not getattr(args, "no_schema_validation", False):
+        errors = validate_tool_payload(tool_name, payload)
+        if errors:
+            joined = "\n".join(f"- {e}" for e in errors)
+            raise SystemExit(f"Payload failed schema validation for {tool_name}:\n{joined}")
     if tool_name in {"shadowproof_eval", "shadowproof_shadowhott_eval", "shadowproof_regression_suite"}:
         payload["_suite_base_dir"] = str(args.json_file.parent)
     print(dumps_response(call_tool(tool_name, payload)))

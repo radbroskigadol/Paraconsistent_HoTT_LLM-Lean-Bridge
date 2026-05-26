@@ -2,7 +2,7 @@
 
 This document is part of the diligence packet for ShadowProof Bridge.  It
 describes what the package does and does not protect against, the
-hardening applied in v0.25.1, v0.25.2, v0.25.3, v0.25.4, and v0.25.5, and how to report
+hardening applied in v0.25.1, v0.25.2, v0.25.3, v0.25.4, v0.25.5, and v0.25.6, and how to report
 further issues.
 
 ## Threat model summary
@@ -39,7 +39,7 @@ remediated in v0.25.1.  See `CHANGELOG.md` for full IDs and tests.
 | CRIT-3a | `multi_tenant` mode let any token claim any tenant               | Tenant is bound to the credential in both modes; mismatched `tenant_id` in payload fails auth. |
 | CRIT-3b | `tenant_dir` accepted `..` / `....` as path segments             | Path-unsafe tenant ids are rejected before any filesystem operation; verified by `relative_to`. |
 
-Regression tests for these defects are in `tests/test_security_regressions.py`; v0.25.2 additions are in `tests/test_v25_2_security_hardening.py`; v0.25.3 boundary hardening tests are in `tests/test_v25_3_boundary_hardening.py`; v0.25.4 local-simulation tests are in `tests/test_v25_4_local_simulation.py`; v0.25.5 acquisition-clean regressions are in `tests/test_v25_5_acquisition_clean.py`.
+Regression tests for these defects are in `tests/test_security_regressions.py`; v0.25.2 additions are in `tests/test_v25_2_security_hardening.py`; v0.25.3 boundary hardening tests are in `tests/test_v25_3_boundary_hardening.py`; v0.25.4 local-simulation tests are in `tests/test_v25_4_local_simulation.py`; v0.25.5 acquisition-clean regressions are in `tests/test_v25_5_acquisition_clean.py`; v0.25.6 release-artifact and math-drift tests are in `tests/test_v25_6_release_artifact_clean.py`.
 
 
 ## Additional hardening applied in v0.25.2
@@ -134,3 +134,15 @@ In addition to the in-process fixes:
    approves a higher mode.
 7. Front the bridge with a TLS-terminating proxy that enforces request
    size limits matching `SHADOWPROOF_MAX_REQUEST_BYTES`.
+
+
+## Additional hardening applied in v0.25.6
+
+v0.25.6 closes the release-artifact and math-drift issues found after v0.25.5:
+
+- Runtime JSON schemas are bundled inside the Python package for wheel installs.
+- CLI calls validate payloads against the same schema boundary used by HTTP/ASGI.
+- Model-provider egress performs DNS/IP checks and caps provider response bytes.
+- Local Lean stdout/stderr retained by the developer runner is capped and truncated.
+- Bilattice coordinate dictionaries require real JSON booleans; string truthiness coercion is rejected.
+- The bilattice self-check now includes join, absorption, and De Morgan duality laws in addition to the order-two involution.

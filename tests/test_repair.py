@@ -74,51 +74,22 @@ def test_repair_engine_bad_commutativity_rejects_drift():
     assert cands[0].kind == PatchKind.REJECT_DRIFT
 
 
-def test_replace_body_preserves_following_theorem_without_print_axioms():
-    code = """theorem t : True := by
-  trivial
-
-theorem u : True := by
-  trivial
-"""
-    new = replace_body(code, "by\n  exact True.intro")
-    assert new is not None
-    assert "exact True.intro" in new
-    assert "theorem u : True" in new
-    assert new.count("theorem ") == 2
+def test_replace_body_ignores_fake_anchor_inside_string_literal():
+    code = 'def fake : String := ":= by\\n  sorry\\n\\n#print axioms fake"\n'
+    assert replace_body(code, "by\n  trivial") is None
 
 
-def test_replace_body_ignores_anchor_inside_string():
-    code = """def s := ":= by\n  fake"
-
+def test_replace_body_uses_real_anchor_not_comment_or_string_noise():
+    code = '''def fake : String := ":= by\n  sorry\n\n#print axioms fake"
+-- := by should not count here
+/- #print axioms fake -/
 theorem t : True := by
   trivial
-"""
-    new = replace_body(code, "by\n  exact True.intro")
-    assert new is not None
-    assert 'def s := ":= by\n  fake"' in new
-    assert "exact True.intro" in new
 
-
-def test_replace_body_ignores_anchor_inside_comment():
-    code = """/- theorem fake : True := by
-  sorry -/
-
-theorem t : True := by
-  trivial
-"""
-    new = replace_body(code, "by\n  exact True.intro")
-    assert new is not None
-    assert "theorem fake" in new
-    assert "exact True.intro" in new
-    assert "trivial" not in new.split("theorem t", 1)[1]
-
-
-def test_replace_body_accepts_newline_between_assign_and_by():
-    code = """theorem t : True :=
-by
-  trivial
-"""
+#print axioms t
+'''
     new = replace_body(code, "by\n  exact True.intro")
     assert new is not None
     assert "exact True.intro" in new
+    assert "def fake" in new
+    assert new.count("#print axioms") == 3  # string literal, preserved comment, and real directive

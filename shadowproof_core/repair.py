@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from .lean_text import replace_first_by_proof_body
+import re
 
+from .lean_lex import mask_lean_comments_and_strings
 from .models import (
     Diagnostic,
     DiagnosticSeverity,
@@ -120,10 +121,31 @@ def _body_patch(draft: LeanDraft, body: str, description: str) -> Patch:
 def replace_body(code: str, body: str) -> str | None:
     """Replace the proof body of a translator-emitted theorem.
 
-    This uses a delimiter-aware source splitter rather than regex substitution:
-    anchors inside comments or strings are ignored, ``#print axioms`` trailers
-    are preserved, and following top-level declarations are not consumed.  If no
-    ``:= by`` proof body is found, ``None`` is returned so the caller can record
-    an honest no-patch diagnostic.
+    This uses a small delimiter-aware Lean scanner rather than a raw regex
+    substitution.  Anchors are searched only in code positions outside comments
+    and string/char literals, so a string such as ``":= by ... #print axioms"``
+    cannot be mistaken for a proof body.
+
+    Replacement strategy:
+    - If a real ``#print axioms`` audit directive appears after the proof,
+      replace from the closest preceding real ``:= by`` anchor through the
+      blank space before that directive.
+    - Otherwise replace from the last real ``:= by`` anchor through EOF.
+    - If no real proof-body anchor exists, return ``None`` so callers record an
+      honest no-patch diagnostic.
     """
-    return replace_first_by_proof_body(code, body)
+    masked = mask_lean_comments_and_strings(code, mask_strings=True)
+    by_anchors = [m for m in re.finditer(r":=\s+by\b", masked)]
+    if not by_anchors:
+        return None
+
+    print_anchors = [m for m in re.finditer(r"(?m)^\s*#print\s+axioms\b", masked)]
+    if print_anchors:
+        for print_anchor in print_anchors:
+            preceding = [m for m in by_anchors if m.start() < print_anchor.start()]
+            if preceding:
+                by_anchor = preceding[-1]
+                return code[:by_anchor.start()] + f":= {body}\n\n" + code[print_anchor.start():]
+
+    by_anchor = by_anchors[-1]
+    return code[:by_anchor.start()] + f":= {body}\n"

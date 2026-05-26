@@ -1,10 +1,12 @@
-include LICENSE NOTICE README.md SECURITY.md CHANGELOG.md sbom.spdx.json
-include PATCH_NOTES_*.md
+include LICENSE NOTICE SECURITY.md README.md CHANGELOG.md sbom.spdx.json
+include PATCH_NOTES_V25_*.md
+recursive-include shadowproof_core/schemas *.json
 recursive-include schemas *.json
 recursive-include docs *.md
 recursive-include examples *.json
 recursive-include scripts *.py *.sh
 recursive-include lean_project_template *
-recursive-include mcp README.md package.json package-lock.json tsconfig.json server.ts dist/*.js
-recursive-include shadowproof_core/artifacts *
-recursive-include reports *.json *.md
+recursive-include deploy *.Dockerfile *.yml *.yaml *.conf
+recursive-include mcp package.json package-lock.json tsconfig.json server.ts README.md
+recursive-include mcp/dist *.js *.d.ts *.map
+recursive-include tests *.py

@@ -1,4 +1,4 @@
-# ShadowProof Bridge v25.6 Release-Artifact-Clean Package
+# ShadowProof Bridge v25.6 Acquisition-Clean Package
 
 ShadowProof Bridge is a self-hostable Lean-acceptance gateway with
 ShadowHoTT bilattice-routed disposition.  It accepts proof attempts
@@ -43,7 +43,7 @@ in-process counterparts of the same statements.
 - OpenAPI 3.1 schema generation plus a deliberately minimal TypeScript MCP bridge. Full Python/TypeScript SDKs are not bundled.
 - 84 tools registered in the in-process tool registry; 35 of them are
   declared in `schemas/openai_mcp_tool_descriptors.json` for OpenAI
-  native tool surfaces (the omitted 48 are admin, domain-pack, and
+  native tool surfaces (the omitted 49 are admin, domain-pack, and
   promotion tools that are not part of the buyer-facing API).
 - Runtime De Morgan symmetry report (`shadowproof demorgan-symmetry`).
 - Offline training-parameter capacity planner
@@ -68,7 +68,7 @@ To set buyer expectations correctly:
   gVisor / Firecracker / Kubernetes with appropriate CPU, memory,
   network, and filesystem controls.  See `SECURITY.md` for the threat
   model and recommended deployment hardening.
-- **No external security review.** The audits that produced the v0.25.2/v0.25.3/v0.25.4/v0.25.5
+- **No external security review.** The audits that produced the v0.25.2/v0.25.3/v0.25.4/v0.25.6
   fixes (see `CHANGELOG.md`) were internal exercises.  Third-party
   review is on the "outstanding for GA" list.
 - **No real customer eval corpora.** The shipped `examples/evals/` are
@@ -78,7 +78,7 @@ To set buyer expectations correctly:
 
 ```bash
 pip install -e .
-python -m pytest tests/ -q                                              # 102 passed
+python -m pytest tests/ -q                                              # 119 passed, 1 skipped
 python -m shadowproof_core.cli demorgan-symmetry examples/tool_requests/demorgan_symmetry.json
 python -m shadowproof_core.cli training-capacity-plan examples/optimization/training_capacity_plan.json
 python -m shadowproof_core.cli shadowhott-eval examples/evals/shadowhott_eval.json
@@ -89,7 +89,7 @@ python -m shadowproof_core.cli regression examples/evals/regression_suite.json
 
 ```bash
 export SHADOWPROOF_AUTH_MODE=bearer
-export SHADOWPROOF_BEARER_TOKENS=replace-with-random-token:default
+export SHADOWPROOF_BEARER_TOKENS=dev-token:default
 python -m shadowproof_core.cli serve --host 127.0.0.1 --port 8765
 ```
 
@@ -97,7 +97,7 @@ In another shell:
 
 ```bash
 curl -sS -X POST http://127.0.0.1:8765/shadowproof_shadowhott_state \
-    -H 'Authorization: Bearer replace-with-random-token' \
+    -H 'Authorization: Bearer dev-token' \
     -H 'Content-Type: application/json' \
     -d '{"request_id":"smoke","proof_graph":[],"lean_status":"not_run","status":"unchecked"}'
 ```
@@ -138,7 +138,7 @@ Primary buyer documents live in `docs/acquisition/`.  Start with
 ## Security
 
 See `SECURITY.md` for the threat model, the hardening applied in
-v0.25.2, v0.25.3, v0.25.4, and v0.25.5 (relative to v0.25.0), and the recommended deployment posture.
+v0.25.2, v0.25.3, v0.25.4, and v0.25.6 (relative to v0.25.0), and the recommended deployment posture.
 A short summary:
 
 - Server configuration comes from environment variables only; request
@@ -154,6 +154,7 @@ A short summary:
 - Quota mode comparisons are normalized before rate-limit checks, so `Memory`/`Redis` cannot bypass quota enforcement.
 - All 84 HTTP/ASGI tool routes now resolve to an input schema; high-risk routes now use strict exact schemas where possible.
 - Additional file-reading/writing paths are root-guarded; domain-pack list/get/retrieval share the same allowed-root policy; file-writing HTTP routes are admin-scoped.
+- Retail hardening patch: Lean comment/literal masking is now delimiter-aware and nested-comment-safe across security preflight, theorem-lock, and ShadowHoTT fingerprint obstruction checks; proof-body repair replacement now uses a delimiter-aware anchor splitter rather than raw regex substitution.
 
 ## Outstanding for GA
 

@@ -15,25 +15,28 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: mcp/package-lock.json
       - name: Install package and test dependencies
-        run: python -m pip install --upgrade pip build && python -m pip install -e '.[dev]'
+        run: python -m pip install --upgrade pip && python -m pip install -e '.[dev]'
       - name: Compile Python
         run: python -m compileall -q shadowproof_core tests
       - name: Run unit and regression tests
         run: PYTHONPATH=. python -m pytest tests/ -q
+      - name: Build wheel and smoke-test installed schemas outside source tree
+        run: |
+          python -m pip wheel --no-deps --no-build-isolation . -w dist
+          python -m pip install --no-deps --target /tmp/shadowproof_wheel_smoke dist/shadowproof_bridge-0.25.6-*.whl
+          cd /tmp
+          PYTHONPATH=/tmp/shadowproof_wheel_smoke python - <<'PY'
+from shadowproof_core.schema_validation import schema_for_tool
+assert schema_for_tool('lean_check') is not None
+assert schema_for_tool('shadowproof_model_provider_call') is not None
+PY
+      - name: Build MCP bridge
+        run: cd mcp && npm ci && npm run build
       - name: Run buyer demo
         run: bash scripts/run_buyer_demo.sh
       - name: Run local simulation
         run: python -m shadowproof_core.cli local-sim examples/local_simulation/request.json
-      - name: Validate no default secrets in deployable configuration
-        run: python scripts/check_no_default_secrets.py
-      - name: Build MCP server
-        working-directory: mcp
-        run: npm ci && npm run build
-      - name: Run wheel smoke test for packaged schemas and CLI validation
-        run: python scripts/wheel_smoke.py
       - name: Check Dockerfile runtime artifact inclusion
         run: python - <<'PY'
 from pathlib import Path
@@ -41,10 +44,7 @@ text = Path('deploy/api.Dockerfile').read_text()
 for artifact in ['schemas', 'docs', 'examples', 'scripts', 'lean_project_template']:
     assert f'COPY {artifact} ./{artifact}' in text
 PY
-      - name: Docker build smoke
-        run: |
-          if command -v docker >/dev/null 2>&1; then
-            docker build -f deploy/api.Dockerfile -t shadowproof-api:ci .
-          else
-            echo "Docker unavailable; skipping local build smoke."
-          fi
+      - name: Docker build smoke test
+        run: docker build -f deploy/api.Dockerfile -t shadowproof-api-ci .
+      - name: Lightweight secret scan
+        run: python scripts/ci_secret_scan.py

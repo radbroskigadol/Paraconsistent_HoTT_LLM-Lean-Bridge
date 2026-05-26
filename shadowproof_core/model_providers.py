@@ -11,7 +11,6 @@ from urllib import request as urlrequest
 from urllib.parse import urlparse
 
 from .config import ShadowProofConfig
-from .io_limits import capped_read_bytes
 
 
 @dataclass
@@ -189,61 +188,9 @@ def _extract_text(raw: Any) -> str:
     return ""
 
 
-def _forbidden_provider_ip(ip: ipaddress._BaseAddress) -> bool:
-    return (
-        ip.is_private
-        or ip.is_loopback
-        or ip.is_link_local
-        or ip.is_reserved
-        or ip.is_multicast
-        or ip.is_unspecified
-    )
-
-
-def _resolve_host_public_only(host: str, port: int | None) -> str | None:
-    """Fail closed unless every resolved address is public-routable.
-
-    Literal IPs are checked directly.  DNS names are resolved with
-    ``socket.getaddrinfo`` and all returned addresses must be non-private,
-    non-loopback, non-link-local, non-reserved, non-multicast, and specified.
-    NXDOMAIN, resolver failures, or an empty result are treated as policy
-    failures because the bridge cannot prove the configured provider target is
-    safe.
-    """
-    try:
-        ip = ipaddress.ip_address(host.strip("[]"))
-    except ValueError:
-        ip = None
-    if ip is not None:
-        if _forbidden_provider_ip(ip):
-            return "model-provider URL must not target private, loopback, link-local, reserved, multicast, or unspecified IP ranges"
-        return None
-
-    try:
-        infos = socket.getaddrinfo(host, port or 443, type=socket.SOCK_STREAM)
-    except socket.gaierror as e:
-        return f"model-provider DNS resolution failed closed for host {host!r}: {e}"
-    except OSError as e:
-        return f"model-provider DNS resolution failed closed for host {host!r}: {e}"
-    addresses: set[str] = set()
-    for info in infos:
-        sockaddr = info[4]
-        if not sockaddr:
-            continue
-        addresses.add(str(sockaddr[0]))
-    if not addresses:
-        return f"model-provider DNS resolution returned no addresses for host {host!r}"
-    for addr in sorted(addresses):
-        try:
-            resolved_ip = ipaddress.ip_address(addr.strip("[]"))
-        except ValueError:
-            return f"model-provider DNS resolution returned an unparsable address for host {host!r}: {addr!r}"
-        if _forbidden_provider_ip(resolved_ip):
-            return f"model-provider host {host!r} resolves to a forbidden IP address: {addr}"
-    return None
-
-
 FORBIDDEN_CALLER_EGRESS_FIELDS = frozenset({"provider_url", "provider_headers", "provider_bearer_token"})
+DEFAULT_MAX_PROVIDER_RESPONSE_BYTES = 2_000_000
+
 
 
 def _parse_provider_url_map(raw: str | None) -> dict[str, str]:
@@ -297,7 +244,59 @@ def _validate_provider_url(url: str) -> str | None:
         return "model-provider URL is missing a host"
     if host in {"localhost", "localhost.localdomain"} or host.endswith(".local"):
         return "model-provider host must not be localhost or .local"
-    return _resolve_host_public_only(host, parsed.port)
+
+    literal_ip = _parse_ip_literal(host)
+    if literal_ip is not None:
+        return _validate_public_ip(literal_ip)
+
+    # Hostnames are not safe merely because they are not IP literals: DNS can
+    # resolve public-looking names to RFC1918/link-local/internal ranges.
+    # Production egress therefore resolves before opening the socket and rejects
+    # every unsafe answer.  Tests can opt out only with the explicit env switch.
+    if os.environ.get("SHADOWPROOF_MODEL_PROVIDER_SKIP_DNS_GUARD", "").lower() in {"1", "true", "yes", "on"}:
+        return None
+    try:
+        infos = socket.getaddrinfo(host, parsed.port or (443 if parsed.scheme == "https" else 80), type=socket.SOCK_STREAM)
+    except socket.gaierror as exc:
+        return f"model-provider host DNS resolution failed: {exc}"
+    seen: set[str] = set()
+    for info in infos:
+        sockaddr = info[4]
+        if not sockaddr:
+            continue
+        raw_ip = str(sockaddr[0])
+        if raw_ip in seen:
+            continue
+        seen.add(raw_ip)
+        ip = _parse_ip_literal(raw_ip)
+        if ip is None:
+            return f"model-provider DNS returned unparsable address: {raw_ip}"
+        err = _validate_public_ip(ip)
+        if err:
+            return "model-provider DNS resolved to a forbidden address: " + err
+    if not seen:
+        return "model-provider host DNS resolution returned no addresses"
+    return None
+
+
+def _parse_ip_literal(host: str) -> ipaddress.IPv4Address | ipaddress.IPv6Address | None:
+    try:
+        return ipaddress.ip_address(host.strip("[]"))
+    except ValueError:
+        return None
+
+
+def _validate_public_ip(ip: ipaddress.IPv4Address | ipaddress.IPv6Address) -> str | None:
+    if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved or ip.is_multicast or ip.is_unspecified:
+        return "model-provider URL must not target private, loopback, link-local, reserved, multicast, or unspecified IP ranges"
+    return None
+
+
+def _read_bounded_response(resp: Any, max_bytes: int = DEFAULT_MAX_PROVIDER_RESPONSE_BYTES) -> bytes:
+    data = resp.read(max_bytes + 1)
+    if len(data) > max_bytes:
+        raise ValueError(f"model-provider response exceeded {max_bytes} bytes")
+    return data
 
 
 def _bounded_int(value: Any, default: int, *, minimum: int, maximum: int) -> int:
@@ -326,20 +325,14 @@ def call_frontier_http(payload: dict[str, Any], cfg: ShadowProofConfig, req: Mod
     body = json.dumps(asdict(req)).encode("utf-8")
     timeout = _bounded_int(payload.get("timeout_seconds", 60), 60, minimum=1, maximum=120)
     retries = _bounded_int(payload.get("retries", 1), 1, minimum=0, maximum=3)
-    return_raw = bool(payload.get("return_raw", False)) and os.environ.get("SHADOWPROOF_MODEL_PROVIDER_RETURN_RAW", "").lower() in {"1", "true", "yes", "on"}
+    return_raw = payload.get("return_raw") is True and os.environ.get("SHADOWPROOF_MODEL_PROVIDER_RETURN_RAW", "").lower() in {"1", "true", "yes", "on"}
     last_error = None
     for attempt in range(1, retries + 2):
         http_req = urlrequest.Request(str(url), data=body, headers=headers)
         try:
-            max_response_bytes = _bounded_int(
-                getattr(cfg, "model_provider_response_max_bytes", 2_000_000),
-                2_000_000,
-                minimum=1024,
-                maximum=20_000_000,
-            )
             with urlrequest.urlopen(http_req, timeout=timeout) as resp:
-                body_bytes = capped_read_bytes(resp, max_response_bytes)
-                raw = json.loads(body_bytes.decode("utf-8"))
+                max_response_bytes = _bounded_int(payload.get("max_response_bytes", DEFAULT_MAX_PROVIDER_RESPONSE_BYTES), DEFAULT_MAX_PROVIDER_RESPONSE_BYTES, minimum=1_024, maximum=10_000_000)
+                raw = json.loads(_read_bounded_response(resp, max_response_bytes).decode("utf-8"))
             text = _extract_text(raw)
             return asdict(ModelProviderResponse(
                 status=str(raw.get("status", "ok")) if isinstance(raw, dict) else "ok",

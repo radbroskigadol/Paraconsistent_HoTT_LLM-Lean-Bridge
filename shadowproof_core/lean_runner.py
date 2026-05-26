@@ -9,17 +9,8 @@ import time
 from pathlib import Path
 
 from .diagnostics import parse_lean_output
-from .io_limits import read_text_file_capped
 from .models import Diagnostic, DiagnosticSeverity, LeanRunResult, LeanStatus, ObstructionKind
 from .security import SecurityPolicy
-
-
-def _env_int(name: str, default: int, *, minimum: int = 1024, maximum: int = 10_000_000) -> int:
-    try:
-        value = int(os.environ.get(name, str(default)))
-    except Exception:
-        value = default
-    return max(minimum, min(maximum, value))
 
 
 class LeanRunner:
@@ -29,13 +20,18 @@ class LeanRunner:
         timeout_seconds: int = 30,
         workdir: str | Path | None = None,
         security_policy: SecurityPolicy | None = None,
-        output_limit_bytes: int | None = None,
+        max_output_bytes: int | None = None,
     ):
         self.command = command or os.environ.get("SHADOWPROOF_LEAN_CMD", "lake env lean")
         self.timeout_seconds = timeout_seconds
         self.workdir = Path(workdir).resolve() if workdir else None
         self.security_policy = security_policy or SecurityPolicy()
-        self.output_limit_bytes = output_limit_bytes or _env_int("SHADOWPROOF_LEAN_OUTPUT_MAX_BYTES", 200_000)
+        self.max_output_bytes = _bounded_int(
+            max_output_bytes if max_output_bytes is not None else os.environ.get("SHADOWPROOF_LEAN_MAX_OUTPUT_BYTES", 1_000_000),
+            default=1_000_000,
+            minimum=8_192,
+            maximum=10_000_000,
+        )
 
     def check_code(self, code: str) -> LeanRunResult:
         preflight = self.security_policy.preflight(code)
@@ -57,60 +53,108 @@ class LeanRunner:
     def check_file(self, path: Path) -> LeanRunResult:
         cmd = shlex.split(self.command) + [str(path)]
         start = time.monotonic()
-        proc = None
-        with tempfile.TemporaryDirectory(prefix="shadowproof_lean_output_") as outdir:
-            out_path = Path(outdir) / "stdout.txt"
-            err_path = Path(outdir) / "stderr.txt"
-            try:
-                with out_path.open("wb") as out_f, err_path.open("wb") as err_f:
-                    proc = subprocess.Popen(
-                        cmd,
-                        cwd=str(self.workdir) if self.workdir else None,
-                        stdout=out_f,
-                        stderr=err_f,
-                        start_new_session=True,
-                    )
-                    proc.wait(timeout=self.timeout_seconds)
-            except FileNotFoundError as e:
-                return LeanRunResult(
-                    lean_status=LeanStatus.NOT_AVAILABLE,
-                    ok=False,
-                    stderr=str(e),
-                    diagnostics=[Diagnostic(
-                        DiagnosticSeverity.ERROR,
-                        ObstructionKind.LEAN_NOT_AVAILABLE,
-                        str(e),
-                        source="lean_runner",
-                    )],
-                    command=cmd,
-                )
-            except subprocess.TimeoutExpired:
-                if proc is not None:
-                    try:
-                        os.killpg(proc.pid, signal.SIGKILL)
-                    except ProcessLookupError:
-                        pass
-                    proc.wait(timeout=5)
-                stdout = read_text_file_capped(out_path, self.output_limit_bytes) if out_path.exists() else ""
-                stderr = read_text_file_capped(err_path, self.output_limit_bytes) if err_path.exists() else ""
-                return LeanRunResult(
-                    lean_status=LeanStatus.TIMEOUT,
-                    ok=False,
-                    stdout=stdout,
-                    stderr=stderr,
-                    diagnostics=[Diagnostic(
-                        DiagnosticSeverity.ERROR,
-                        ObstructionKind.TIMEOUT,
-                        f"Lean timed out after {self.timeout_seconds} seconds.",
-                        source="lean_runner",
-                    )],
-                    command=cmd,
-                )
 
-            stdout = read_text_file_capped(out_path, self.output_limit_bytes)
-            stderr = read_text_file_capped(err_path, self.output_limit_bytes)
+        proc = None
+        try:
+            proc = subprocess.Popen(
+                cmd,
+                cwd=str(self.workdir) if self.workdir else None,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=False,
+                start_new_session=True,
+            )
+            stdout, stderr, timed_out, truncated = _communicate_bounded(
+                proc,
+                timeout_seconds=self.timeout_seconds,
+                max_bytes_per_stream=self.max_output_bytes,
+            )
+        except FileNotFoundError as e:
+            return LeanRunResult(
+                lean_status=LeanStatus.NOT_AVAILABLE,
+                ok=False,
+                stderr=str(e),
+                diagnostics=[Diagnostic(
+                    DiagnosticSeverity.ERROR,
+                    ObstructionKind.LEAN_NOT_AVAILABLE,
+                    str(e),
+                    source="lean_runner",
+                )],
+                command=cmd,
+            )
+
+        if timed_out:
+            if proc is not None:
+                try:
+                    os.killpg(proc.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+            return LeanRunResult(
+                lean_status=LeanStatus.TIMEOUT,
+                ok=False,
+                stdout=stdout,
+                stderr=stderr,
+                diagnostics=[Diagnostic(
+                    DiagnosticSeverity.ERROR,
+                    ObstructionKind.TIMEOUT,
+                    f"Lean timed out after {self.timeout_seconds} seconds.",
+                    source="lean_runner",
+                )],
+                command=cmd,
+            )
 
         elapsed = int((time.monotonic() - start) * 1000)
         result = parse_lean_output(stdout, stderr, proc.returncode if proc is not None else 1, cmd)
         result.elapsed_ms = elapsed
+        if truncated:
+            result.diagnostics.append(Diagnostic(
+                DiagnosticSeverity.WARNING,
+                ObstructionKind.UNKNOWN_LEAN_FAILURE,
+                f"Lean stdout/stderr was truncated to {self.max_output_bytes} bytes per stream.",
+                source="lean_runner",
+            ))
         return result
+
+
+def _communicate_bounded(proc: subprocess.Popen[bytes], *, timeout_seconds: int, max_bytes_per_stream: int) -> tuple[str, str, bool, bool]:
+    """Communicate with child and retain only capped stdout/stderr.
+
+    This local developer runner truncates retained output so diagnostics and
+    API responses cannot grow without bound.  Production deployments should
+    still use the isolated Lean worker for OS-level memory/process limits.
+    """
+    timed_out = False
+    try:
+        stdout_b, stderr_b = proc.communicate(timeout=max(1, int(timeout_seconds)))
+    except subprocess.TimeoutExpired as exc:
+        timed_out = True
+        try:
+            os.killpg(proc.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        try:
+            stdout_b, stderr_b = proc.communicate(timeout=1)
+        except Exception:
+            stdout_b, stderr_b = exc.stdout or b"", exc.stderr or b""
+
+    stdout, stdout_truncated = _decode_and_cap(stdout_b or b"", max_output_bytes=max_bytes_per_stream)
+    stderr, stderr_truncated = _decode_and_cap(stderr_b or b"", max_output_bytes=max_bytes_per_stream)
+    return stdout, stderr, timed_out, stdout_truncated or stderr_truncated
+
+
+def _decode_and_cap(data: bytes, *, max_output_bytes: int) -> tuple[str, bool]:
+    truncated = len(data) > max_output_bytes
+    if truncated:
+        data = data[:max_output_bytes]
+    text = data.decode("utf-8", errors="replace")
+    if truncated:
+        text += "\n[shadowproof: output truncated]\n"
+    return text, truncated
+
+
+def _bounded_int(value: object, *, default: int, minimum: int, maximum: int) -> int:
+    try:
+        out = int(value)  # type: ignore[arg-type]
+    except Exception:
+        out = default
+    return max(minimum, min(maximum, out))

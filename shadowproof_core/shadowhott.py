@@ -7,6 +7,7 @@ from dataclasses import dataclass, asdict, field
 from enum import Enum
 from typing import Any
 
+from .lean_lex import strip_lean_comments_for_policy
 from .bilattice import (
     BilatticeValue,
     TOP_L,
@@ -352,51 +353,42 @@ def audit_shadowhott_state(payload: dict[str, Any]) -> dict[str, Any]:
 def bilattice_axiom_report() -> dict[str, Any]:
     involution_order_two = all(v.involution().involution() == v for v in L_VALUES)
     fixed_points = sorted(v.label for v in L_VALUES if v.involution() == v)
-    meet_assoc = all(a.meet(b).meet(c) == a.meet(b.meet(c)) for a in L_VALUES for b in L_VALUES for c in L_VALUES)
-    meet_comm = all(a.meet(b) == b.meet(a) for a in L_VALUES for b in L_VALUES)
-    meet_idempotent = all(a.meet(a) == a for a in L_VALUES)
+    composition_assoc = all(a.meet(b).meet(c) == a.meet(b.meet(c)) for a in L_VALUES for b in L_VALUES for c in L_VALUES)
     join_assoc = all(a.join(b).join(c) == a.join(b.join(c)) for a in L_VALUES for b in L_VALUES for c in L_VALUES)
-    join_comm = all(a.join(b) == b.join(a) for a in L_VALUES for b in L_VALUES)
-    join_idempotent = all(a.join(a) == a for a in L_VALUES)
+    meet_comm_idem = all(a.meet(b) == b.meet(a) and a.meet(a) == a for a in L_VALUES for b in L_VALUES)
+    join_comm_idem = all(a.join(b) == b.join(a) and a.join(a) == a for a in L_VALUES for b in L_VALUES)
     absorption = all(a.meet(a.join(b)) == a and a.join(a.meet(b)) == a for a in L_VALUES for b in L_VALUES)
-    demorgan_meet_join = all(a.meet(b).involution() == a.involution().join(b.involution()) for a in L_VALUES for b in L_VALUES)
-    demorgan_join_meet = all(a.join(b).involution() == a.involution().meet(b.involution()) for a in L_VALUES for b in L_VALUES)
+    meet_id_zero = all(TOP_L.meet(a) == a and BOTTOM_L.meet(a) == BOTTOM_L for a in L_VALUES)
+    join_id_zero = all(BOTTOM_L.join(a) == a and TOP_L.join(a) == TOP_L for a in L_VALUES)
+    demorgan_duality = all(
+        a.meet(b).involution() == a.involution().join(b.involution())
+        and a.join(b).involution() == a.involution().meet(b.involution())
+        for a in L_VALUES for b in L_VALUES
+    )
     refl_top = ProofPath.refl("x").label == TOP_L
     designation_binary = all(isinstance(v.designated, bool) and v.designated == v.truth for v in L_VALUES)
     aut = aut_L()
     aut_z2 = aut["composition_table"].get("involution∘involution") == "identity"
-    checks = [
-        involution_order_two,
-        meet_assoc,
-        meet_comm,
-        meet_idempotent,
-        join_assoc,
-        join_comm,
-        join_idempotent,
-        absorption,
-        demorgan_meet_join,
-        demorgan_join_meet,
-        refl_top,
-        designation_binary,
-        aut_z2,
-        fixed_points == ["both", "neither"],
-    ]
+    all_passed = all([
+        involution_order_two, fixed_points == ["both", "neither"], composition_assoc, join_assoc,
+        meet_comm_idem, join_comm_idem, absorption, meet_id_zero, join_id_zero, demorgan_duality,
+        refl_top, designation_binary, aut_z2,
+    ])
     return {
-        "all_passed": all(checks),
+        "all_passed": all_passed,
         "L": [v.to_dict() for v in L_VALUES],
         "designation": "designated iff truth_coordinate is true",
         "involution_order_two": involution_order_two,
         "involution_fixed_points": fixed_points,
         "aut_L": aut,
-        "composition_meet_associative": meet_assoc,
-        "composition_meet_commutative": meet_comm,
-        "composition_meet_idempotent": meet_idempotent,
+        "composition_meet_associative": composition_assoc,
         "join_associative": join_assoc,
-        "join_commutative": join_comm,
-        "join_idempotent": join_idempotent,
-        "absorption": absorption,
-        "demorgan_meet_join_duality": demorgan_meet_join,
-        "demorgan_join_meet_duality": demorgan_join_meet,
+        "meet_commutative_idempotent": meet_comm_idem,
+        "join_commutative_idempotent": join_comm_idem,
+        "absorption_laws": absorption,
+        "meet_identity_top_zero_bottom": meet_id_zero,
+        "join_identity_bottom_zero_top": join_id_zero,
+        "demorgan_duality": demorgan_duality,
         "refl_label_top": refl_top,
         "designation_binary": designation_binary,
     }
@@ -906,6 +898,5 @@ def coerce_fingerprint(fp: Any) -> Any:
 
 
 def strip_comments(code: str) -> str:
-    code = re.sub(r"/-.*?-/", "", code, flags=re.S)
-    code = re.sub(r"--.*", "", code)
-    return code
+    """Compatibility wrapper for ShadowHoTT fingerprint/policy scans."""
+    return strip_lean_comments_for_policy(code)
