@@ -1,5 +1,5 @@
 /-
-  ShadowProof Bridge v25.6 — De Morgan order-two symmetry on the
+  ShadowProof Bridge v25.7 — De Morgan order-two symmetry on the
   paraconsistent bilattice L = Bool × Bool.
 
   Coordinates are (truth, refutation).  Designation is the truth coordinate.

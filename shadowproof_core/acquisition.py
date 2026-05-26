@@ -39,7 +39,7 @@ def acquisition_packet(payload: dict[str, Any] | None = None) -> dict[str, Any]:
     missing = [name for name, status in docs.items() if not status["exists"]]
     return {
         "status": "ready" if not missing else "incomplete",
-        "version": "0.25.6",
+        "version": "0.25.8",
         "audience": payload.get("audience", "technical acquirer / strategic buyer"),
         "positioning": "self-hostable pilot stack and diligence-ready package for a J-conserved ShadowHoTT bridge to Lean",
         "core_claims": [
@@ -73,7 +73,7 @@ def acquisition_packet(payload: dict[str, Any] | None = None) -> dict[str, Any]:
 def claims_boundary(payload: dict[str, Any] | None = None) -> dict[str, Any]:
     return {
         "status": "ok",
-        "version": "0.25.6",
+        "version": "0.25.8",
         "allowed_claims": [
             "implements the operational L = 2×2 ShadowHoTT bilattice core",
             "uses bilattice labels in proof paths, certificates, repair selection, and human-review routing",
@@ -96,7 +96,7 @@ def claims_boundary(payload: dict[str, Any] | None = None) -> dict[str, Any]:
 def due_diligence_checklist(payload: dict[str, Any] | None = None) -> dict[str, Any]:
     return {
         "status": "ok",
-        "version": "0.25.6",
+        "version": "0.25.8",
         "tracks": [
             "mathematical correctness",
             "Lean/Mathlib reproducibility",
@@ -142,7 +142,7 @@ def investor_deck_index(payload: dict[str, Any] | None = None) -> dict[str, Any]
     optional_missing = [name for name, status in optional.items() if not status["exists"]]
     return {
         "status": "ready" if not missing else "incomplete",
-        "version": "0.25.6",
+        "version": "0.25.8",
         "audience": payload.get("audience", "strategic buyer / acquirer"),
         "positioning": "buyer-facing deck notes, valuation memo, and day-one acquirer checklist; binary deck/PDF assets are optional collateral",
         "docs": docs,

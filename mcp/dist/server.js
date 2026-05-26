@@ -5,7 +5,7 @@ import { spawnSync } from "node:child_process";
 import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-const server = new McpServer({ name: "ShadowProof Lean Bridge", version: "0.25.6" }, { capabilities: { tools: {} } });
+const server = new McpServer({ name: "ShadowProof Lean Bridge", version: "0.25.8" }, { capabilities: { tools: {} } });
 function runPythonTool(command, payload) {
     const dir = mkdtempSync(join(tmpdir(), "shadowproof-mcp-"));
     const inputPath = join(dir, "request.json");

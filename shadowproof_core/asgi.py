@@ -82,7 +82,7 @@ async def app(scope, receive, send):
 
     if method == "GET":
         if path in {"/health", "/livez"}:
-            return await _send_json(send, 200, {"ok": True, "service": "shadowproof_bridge", "version": "0.25.6"})
+            return await _send_json(send, 200, {"ok": True, "service": "shadowproof_bridge", "version": "0.25.8"})
         if path == "/readyz":
             return await _send_json(send, 200, call_tool("shadowproof_readiness", {}))
         if path == "/metrics":

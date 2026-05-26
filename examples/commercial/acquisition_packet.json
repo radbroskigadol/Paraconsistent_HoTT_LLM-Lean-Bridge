@@ -1,7 +1,7 @@
 {
   "request_id": "acquisition-packet-example",
   "company": "ShadowProof Bridge (pre-commercial)",
-  "version": "0.25.6",
+  "version": "0.25.7",
   "release_stage": "acquisition_clean_pre_commercial_pilot_packet",
   "deliverables": [
     "Lean-acceptance gateway with theorem-fingerprint lock",

@@ -24,7 +24,7 @@ jobs:
       - name: Build wheel and smoke-test installed schemas outside source tree
         run: |
           python -m pip wheel --no-deps --no-build-isolation . -w dist
-          python -m pip install --no-deps --target /tmp/shadowproof_wheel_smoke dist/shadowproof_bridge-0.25.6-*.whl
+          python -m pip install --no-deps --target /tmp/shadowproof_wheel_smoke dist/shadowproof_bridge-0.25.7-*.whl
           cd /tmp
           PYTHONPATH=/tmp/shadowproof_wheel_smoke python - <<'PY'
 from shadowproof_core.schema_validation import schema_for_tool

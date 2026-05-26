@@ -2,8 +2,8 @@
   "spdxVersion": "SPDX-2.3",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "name": "shadowproof-bridge-v0.25.6-sbom",
-  "documentNamespace": "https://example.invalid/shadowproof-bridge/sbom/v0.25.6",
+  "name": "shadowproof-bridge-v0.25.7-sbom",
+  "documentNamespace": "https://example.invalid/shadowproof-bridge/sbom/v0.25.7",
   "creationInfo": {
     "created": "2026-05-25T23:59:00Z",
     "creators": [
@@ -15,7 +15,7 @@
     {
       "name": "shadowproof-bridge",
       "SPDXID": "SPDXRef-Package-shadowproof-bridge",
-      "versionInfo": "0.25.6",
+      "versionInfo": "0.25.7",
       "downloadLocation": "NOASSERTION",
       "filesAnalyzed": false,
       "licenseConcluded": "LicenseRef-Proprietary-All-Rights-Reserved",

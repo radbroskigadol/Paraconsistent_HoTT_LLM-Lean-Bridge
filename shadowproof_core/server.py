@@ -182,7 +182,7 @@ class ShadowProofHandler(BaseHTTPRequestHandler):
         cfg = load_config({})
         code = 200
         if path in {"/health", "/livez"}:
-            self._send(200, {"ok": True, "service": "shadowproof_bridge", "version": "0.25.6"})
+            self._send(200, {"ok": True, "service": "shadowproof_bridge", "version": "0.25.8"})
         elif path == "/readyz":
             self._send(200, call_tool("shadowproof_readiness", {}))
         elif path == "/metrics":
@@ -261,5 +261,5 @@ class ShadowProofHandler(BaseHTTPRequestHandler):
 
 def serve(host: str = "127.0.0.1", port: int = 8765):
     server = ThreadingHTTPServer((host, port), ShadowProofHandler)
-    print(f"ShadowProof Bridge v25.6 Pre-Commercial Package listening on http://{host}:{port}", flush=True)
+    print(f"ShadowProof Bridge v25.8 Pre-Commercial Package listening on http://{host}:{port}", flush=True)
     server.serve_forever()

@@ -33,6 +33,16 @@ Still not safe to claim without buyer-side integration:
 
 
 
+
+## v0.25.7 Lean-governance status
+
+Safe additional claims after the v0.25.7 patch:
+
+- The finite ShadowHoTT bilattice governance core is mirrored in Lean.
+- Disposition routing and No-Glutty-J safety have Lean-side reference theorems.
+- Patch morphism theorem-fingerprint preservation is formalized abstractly in Lean.
+- This remains a finite governance formalization, not a full HoTT/cubical/univalence implementation.
+
 ## v0.25.6 release-artifact clean status
 
 Safe additional claims after the v0.25.6 patch:

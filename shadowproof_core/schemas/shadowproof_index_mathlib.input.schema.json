@@ -28,6 +28,14 @@
     },
     "default_import": {
       "type": "string"
+    },
+    "build_dependency_graph": {
+      "type": "boolean"
+    },
+    "lsh_bucket_bits": {
+      "type": "integer",
+      "minimum": 4,
+      "maximum": 64
     }
   },
   "additionalProperties": false

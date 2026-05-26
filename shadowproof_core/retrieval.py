@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from .path_guard import resolve_under_allowed_root
+from .schema_validation import strict_bool
 
 
 DEFAULT_DOMAIN_DIRS = ["domains"]
@@ -83,6 +84,9 @@ class RetrievalCandidate:
     file: str | None = None
     line: int | None = None
     tags: list[str] = field(default_factory=list)
+    dependencies: list[str] = field(default_factory=list)
+    lsh_bucket: str | None = None
+    structure_hash: str | None = None
 
 
 @dataclass
@@ -97,6 +101,8 @@ class RetrievalResult:
     definition_hints: list[str]
     prompt_context: str
     elapsed_ms: int
+    retrieval_mode: str = "lexical"
+    dependency_graph_summary: dict[str, Any] = field(default_factory=dict)
 
 
 def list_domain_packs(domain_dirs: list[str] | None = None) -> list[DomainPack]:
@@ -289,6 +295,10 @@ def candidates_from_index(query: str, index_path: str | Path, domains: list[str]
             score = lexical_score(q_terms, text)
             if score <= 0:
                 continue
+            deps = [str(x) for x in raw.get("dependencies", []) if isinstance(x, str)]
+            dep_overlap = q_terms & set(tokenize(" ".join(deps)))
+            if dep_overlap:
+                score += min(3.0, 0.5 * len(dep_overlap))
             out.append(RetrievalCandidate(
                 source="mathlib_index",
                 domain=str(raw.get("domain", "unknown")),
@@ -300,6 +310,9 @@ def candidates_from_index(query: str, index_path: str | Path, domains: list[str]
                 file=raw.get("file"),
                 line=raw.get("line"),
                 tags=list(raw.get("tags", [])),
+                dependencies=deps,
+                lsh_bucket=str(raw.get("lsh_bucket")) if raw.get("lsh_bucket") is not None else None,
+                structure_hash=str(raw.get("structure_hash")) if raw.get("structure_hash") is not None else None,
             ))
     return out
 
@@ -364,9 +377,14 @@ def index_mathlib_sources(payload: dict[str, Any]) -> dict[str, Any]:
     max_files = int(payload.get("max_files", 5000))
     include_private = strict_bool(payload.get("include_private"), False, field="include_private")
     default_import = str(payload.get("default_import", "Mathlib"))
+    build_dependency_graph = strict_bool(payload.get("build_dependency_graph"), False, field="build_dependency_graph")
+    lsh_bucket_bits = int(payload.get("lsh_bucket_bits", 16))
+    if lsh_bucket_bits < 4 or lsh_bucket_bits > 64:
+        raise ValueError("lsh_bucket_bits must be between 4 and 64")
 
     records = []
     files_scanned = 0
+    file_imports: dict[str, list[str]] = {}
     for src in source_dirs:
         if not src.exists():
             continue
@@ -378,7 +396,8 @@ def index_mathlib_sources(payload: dict[str, Any]) -> dict[str, Any]:
                 text = file.read_text(encoding="utf-8", errors="ignore")
             except Exception:
                 continue
-            records.extend(extract_declarations_from_lean(text, file, default_import=default_import, include_private=include_private))
+            file_imports[str(file)] = extract_imports_from_lean(text)
+            records.extend(extract_declarations_from_lean(text, file, default_import=default_import, include_private=include_private, lsh_bucket_bits=lsh_bucket_bits))
         if files_scanned >= max_files:
             break
 
@@ -387,13 +406,29 @@ def index_mathlib_sources(payload: dict[str, Any]) -> dict[str, Any]:
         for r in records:
             f.write(json.dumps(r, ensure_ascii=False) + "\n")
 
-    return {
+    result = {
         "status": "ok",
         "output_path": str(output_path),
         "files_scanned": files_scanned,
         "declaration_count": len(records),
         "index_hash": file_hash(output_path),
+        "retrieval_features": {
+            "lexical": True,
+            "dependency_metadata": True,
+            "lsh_buckets": True,
+            "dense_embeddings": False,
+            "tree_sitter_required": False,
+        },
     }
+    if build_dependency_graph:
+        graph_path = output_path.with_suffix(".dependency_graph.json")
+        graph = build_dependency_graph_payload(records, file_imports)
+        graph_path.write_text(json.dumps(graph, indent=2, ensure_ascii=False), encoding="utf-8")
+        result["dependency_graph_path"] = str(graph_path)
+        result["dependency_node_count"] = len(graph["nodes"])
+        result["dependency_edge_count"] = len(graph["edges"])
+        result["dependency_graph_hash"] = file_hash(graph_path)
+    return result
 
 
 DECL_RE = re.compile(
@@ -404,7 +439,7 @@ DECL_RE = re.compile(
 )
 
 
-def extract_declarations_from_lean(text: str, file: Path, default_import: str, include_private: bool = False) -> list[dict[str, Any]]:
+def extract_declarations_from_lean(text: str, file: Path, default_import: str, include_private: bool = False, lsh_bucket_bits: int = 16) -> list[dict[str, Any]]:
     records = []
     for m in DECL_RE.finditer(text):
         if m.group("private") and not include_private:
@@ -415,6 +450,8 @@ def extract_declarations_from_lean(text: str, file: Path, default_import: str, i
         line = text[:m.start()].count("\n") + 1
         statement = rest.split(":=", 1)[0].strip()
         statement = re.sub(r"\s+", " ", statement)[:500]
+        normalized_shape = normalize_declaration_shape(kind, name, statement)
+        dependencies = extract_decl_dependencies(statement, name)
         records.append({
             "kind": kind,
             "name": name,
@@ -424,8 +461,84 @@ def extract_declarations_from_lean(text: str, file: Path, default_import: str, i
             "import_hint": default_import,
             "domain": infer_domain_from_path(file),
             "tags": tokenize(name)[:8],
+            "dependencies": dependencies,
+            "lsh_bucket": lsh_bucket(normalized_shape, bits=lsh_bucket_bits),
+            "structure_hash": hashlib.sha256(normalized_shape.encode("utf-8")).hexdigest(),
+            "normalized_ast_hint": normalized_shape[:500],
         })
     return records
+
+
+def extract_imports_from_lean(text: str) -> list[str]:
+    imports: list[str] = []
+    for line in text.splitlines():
+        m = re.match(r"^\s*import\s+(.+?)\s*$", line)
+        if not m:
+            continue
+        for item in m.group(1).split():
+            if re.match(r"^[A-Za-z_][A-Za-z0-9_.']*$", item):
+                imports.append(item)
+    return unique(imports)
+
+
+def normalize_declaration_shape(kind: str, name: str, statement: str) -> str:
+    """Return a stable, dependency-light structure hint for retrieval LSH.
+
+    This is not a full Lean parser. It intentionally avoids claiming Tree-Sitter
+    or elaborator semantics. The goal is a safe pilot hook for sub-quadratic
+    candidate bucketing that can later be replaced by a real AST parser.
+    """
+    masked = re.sub(r"[A-Za-z_][A-Za-z0-9_'.]*", "ID", statement)
+    masked = re.sub(r"\d+", "NUM", masked)
+    masked = re.sub(r"\s+", " ", masked).strip()
+    return f"{kind}:{masked}"
+
+
+def lsh_bucket(normalized_shape: str, bits: int = 16) -> str:
+    digest = hashlib.sha256(normalized_shape.encode("utf-8")).hexdigest()
+    hex_chars = max(1, min(16, (bits + 3) // 4))
+    return digest[:hex_chars]
+
+
+def extract_decl_dependencies(statement: str, own_name: str) -> list[str]:
+    tokens = re.findall(r"\b[A-Za-z_][A-Za-z0-9_'.]*\b", statement)
+    stop = {"theorem", "lemma", "def", "by", "where", "Type", "Prop", "Sort", "fun", "forall", "let", "in"}
+    deps: list[str] = []
+    seen = set()
+    for tok in tokens:
+        if tok == own_name or tok in stop or tok[:1].islower():
+            continue
+        if tok not in seen:
+            seen.add(tok)
+            deps.append(tok)
+    return deps[:64]
+
+
+def build_dependency_graph_payload(records: list[dict[str, Any]], file_imports: dict[str, list[str]]) -> dict[str, Any]:
+    names = {str(r.get("name")) for r in records}
+    nodes = []
+    edges = []
+    for r in records:
+        name = str(r.get("name", ""))
+        nodes.append({
+            "id": name,
+            "kind": r.get("kind"),
+            "domain": r.get("domain"),
+            "file": r.get("file"),
+            "line": r.get("line"),
+            "lsh_bucket": r.get("lsh_bucket"),
+        })
+        for dep in r.get("dependencies", []):
+            if dep in names:
+                edges.append({"source": name, "target": dep, "kind": "declaration_reference"})
+        for imp in file_imports.get(str(r.get("file")), []):
+            edges.append({"source": name, "target": imp, "kind": "import"})
+    return {
+        "schema_version": "shadowproof.dependency_graph.v1",
+        "nodes": nodes,
+        "edges": edges,
+        "note": "Lexical dependency graph hook; production GraphRAG may replace this with elaborator/Tree-Sitter-derived edges.",
+    }
 
 
 def infer_domain_from_path(file: Path) -> str:

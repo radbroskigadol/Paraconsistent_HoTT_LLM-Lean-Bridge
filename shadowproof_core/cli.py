@@ -10,7 +10,7 @@ from .schema_validation import validate_tool_payload
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="ShadowProof Bridge v25.6 Pre-Commercial Package")
+    parser = argparse.ArgumentParser(description="ShadowProof Bridge v25.8 Pre-Commercial Package")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     def add_json_cmd(name: str, help_text: str):

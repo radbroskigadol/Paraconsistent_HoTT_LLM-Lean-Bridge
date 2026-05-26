@@ -40,7 +40,7 @@ def test_wheel_install_preserves_runtime_schemas(tmp_path):
         stderr=subprocess.PIPE,
         text=True,
     )
-    wheels = list(wheel_dir.glob("shadowproof_bridge-0.25.6-*.whl"))
+    wheels = list(wheel_dir.glob("shadowproof_bridge-0.25.*-*.whl"))
     assert wheels, list(wheel_dir.iterdir())
     subprocess.run(
         [sys.executable, "-m", "pip", "install", "--no-deps", "--target", str(target), str(wheels[0])],

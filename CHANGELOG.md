@@ -1,10 +1,30 @@
 # Changelog
 
+## v0.25.8 — Audit-idea implementation pass
+
+- Added richer eval metrics for human-review escalation accuracy, token load, p95 latency, acceptance rate, repair request rate, and theorem-drift escape rate.
+- Added dependency-light proof-lifecycle trace helpers and lifecycle-derived metric events for draft/security/theorem-lock/Lean/bilattice/routing/escalation stages.
+- Extended metrics and Prometheus output with human-review and bilattice-both counters.
+- Added lexical dependency metadata, declaration structure hashes, and LSH-style buckets to `shadowproof_index_mathlib`; optional sidecar dependency graph output is available via `build_dependency_graph`.
+- Added v0.25.8 regression tests and documentation in `docs/EVAL_OBSERVABILITY_RETRIEVAL_V25_8.md`.
+- Preserved the existing finite ShadowHoTT safety boundary; no full HoTT/cubical/univalence/GNN claims are added to the production core.
+
+## v0.25.7 — Lean-formalized ShadowHoTT governance core
+
+- Added Lean reference files for the finite ShadowHoTT governance layer: `BilatticeCore.lean`, `Routing.lean`, `PatchMorphism.lean`, and `NoGluttyJ.lean`.
+- Formalized the four-valued bilattice carrier, truth/refutation coordinates, designation, meet/path-composition, join, De Morgan duality, absorption laws, and identity/zero laws in Lean.
+- Added a Lean-side reference routing table proving that `accepted + ok + both` routes to `human_review`, not `accept`.
+- Added theorem-fingerprint-preserving patch-morphism lemmas for identity and composition of safe repairs.
+- Added the named No-Glutty-J safety theorem: contradiction-bearing accepted states are designated but review-bound.
+- Updated `shadowproof demorgan-symmetry` output to advertise the expanded Lean governance formalization surface.
+- Added v25.7 regression guards for Lean-file presence, theorem names, root imports, runtime No-Glutty-J behavior, and the expanded formalization report.
+- This release deliberately does not add full HoTT, cubical type theory, univalence, HITs, or new production axioms.
+
 ## v25.6-retail-hardening addendum
 
 - Hardened Lean lexical handling for security/theorem-lock/ShadowHoTT fingerprint scans using a delimiter-aware nested-comment scanner.
 - Replaced fragile proof-body regex substitution with delimiter-aware anchor splitting in the repair engine.
-- Added regression tests; local suite now reports `119 passed, 1 skipped`.
+- Added regression tests; local suite now reports `124 passed, 1 skipped`.
 
 
 ## v0.25.6

@@ -64,6 +64,10 @@ class MetricEvent:
     theorem_family: str | None = None
     theorem_drift_blocked: bool | None = None
     false_theorem_drift_escape: bool | None = None
+    human_review_required: bool | None = None
+    bilattice_truth: bool | None = None
+    bilattice_refutation: bool | None = None
+    lifecycle_stage: str | None = None
     metadata: dict[str, Any] | None = None
 
 
@@ -114,6 +118,9 @@ def metrics_report(cfg: ShadowProofConfig, limit: int = 10000) -> dict[str, Any]
     turns = []
     drift_escapes = 0
     drift_blocks = 0
+    human_review_count = 0
+    bilattice_both_count = 0
+    by_lifecycle_stage: dict[str, int] = {}
 
     for r in rows:
         by_tool[r.get("tool", "unknown")] = by_tool.get(r.get("tool", "unknown"), 0) + 1
@@ -128,6 +135,13 @@ def metrics_report(cfg: ShadowProofConfig, limit: int = 10000) -> dict[str, Any]
             drift_escapes += 1
         if r.get("theorem_drift_blocked"):
             drift_blocks += 1
+        if r.get("human_review_required"):
+            human_review_count += 1
+        if r.get("bilattice_truth") is True and r.get("bilattice_refutation") is True:
+            bilattice_both_count += 1
+        if r.get("lifecycle_stage"):
+            stage = str(r["lifecycle_stage"])
+            by_lifecycle_stage[stage] = by_lifecycle_stage.get(stage, 0) + 1
 
     return {
         "event_count": len(rows),
@@ -138,6 +152,9 @@ def metrics_report(cfg: ShadowProofConfig, limit: int = 10000) -> dict[str, Any]
         "avg_repair_turns": sum(turns) / len(turns) if turns else None,
         "theorem_drift_block_count": drift_blocks,
         "false_theorem_drift_escape_count": drift_escapes,
+        "human_review_required_count": human_review_count,
+        "bilattice_both_count": bilattice_both_count,
+        "by_lifecycle_stage": by_lifecycle_stage,
     }
 
 
@@ -153,6 +170,10 @@ def prometheus_text(cfg: ShadowProofConfig) -> str:
         lines.append(f'shadowproof_status_events_total{{status="{escape_label(status)}"}} {count}')
     lines.append(f"shadowproof_theorem_drift_blocks_total {report['theorem_drift_block_count']}")
     lines.append(f"shadowproof_false_theorem_drift_escapes_total {report['false_theorem_drift_escape_count']}")
+    lines.append(f"shadowproof_human_review_required_total {report['human_review_required_count']}")
+    lines.append(f"shadowproof_bilattice_both_total {report['bilattice_both_count']}")
+    for stage, count in report["by_lifecycle_stage"].items():
+        lines.append(f'shadowproof_lifecycle_stage_events_total{{stage="{escape_label(stage)}"}} {count}')
     if report["avg_estimated_tokens"] is not None:
         lines.append(f"shadowproof_avg_estimated_tokens {report['avg_estimated_tokens']}")
     if report["avg_repair_turns"] is not None:
@@ -169,6 +190,89 @@ def prometheus_text(cfg: ShadowProofConfig) -> str:
         else:
             lines.append(f'shadowproof_http_request_duration_ms_bucket{{tool="{escape_label(tool)}",status="{escape_label(status)}",le="{bucket}"}} {count}')
     return "\n".join(lines) + "\n"
+
+
+PROOF_LIFECYCLE_STAGES = [
+    "draft_received",
+    "security_preflight",
+    "theorem_lock",
+    "lean_validation",
+    "bilattice_evaluation",
+    "routing_decision",
+    "repair_context",
+    "escalation",
+]
+
+
+def make_proof_lifecycle_trace(payload: dict[str, Any] | None, response: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Build a dependency-light proof-lifecycle trace envelope.
+
+    This is intentionally pure and side-effect free: deployments that have
+    OpenTelemetry can attach the returned attributes to real spans, while local
+    pilots can include it in JSON responses or audit packets.
+    """
+    payload = payload or {}
+    response = response or {}
+    shadow = response.get("shadowhott_state") if isinstance(response, dict) else None
+    valuation = shadow.get("global_valuation") if isinstance(shadow, dict) else None
+    if not isinstance(valuation, dict):
+        valuation = shadow.get("valuation") if isinstance(shadow, dict) else None
+    if not isinstance(valuation, dict):
+        valuation = {}
+
+    status = str(response.get("status", "unknown")) if isinstance(response, dict) else "unknown"
+    lean_status = str(response.get("lean_status", "unknown")) if isinstance(response, dict) else "unknown"
+    human_review = status == "human_review" or bool(response.get("certificate", {}).get("human_review_required")) if isinstance(response.get("certificate"), dict) else False
+    if valuation.get("truth") is True and valuation.get("refutation") is True:
+        human_review = True
+
+    stages = []
+    for name in PROOF_LIFECYCLE_STAGES:
+        stage_status = "pending"
+        if name in {"draft_received", "security_preflight", "theorem_lock"}:
+            stage_status = "observed"
+        if name == "lean_validation" and lean_status != "unknown":
+            stage_status = lean_status
+        if name == "bilattice_evaluation" and valuation:
+            stage_status = "observed"
+        if name == "routing_decision" and status != "unknown":
+            stage_status = status
+        if name == "escalation" and human_review:
+            stage_status = "human_review"
+        stages.append({"stage": name, "status": stage_status})
+
+    return {
+        "request_id": str(payload.get("request_id") or response.get("request_id") or "unknown"),
+        "tool": str(response.get("tool") or payload.get("tool") or "unknown"),
+        "status": status,
+        "lean_status": lean_status,
+        "bilattice": {
+            "truth": valuation.get("truth"),
+            "refutation": valuation.get("refutation"),
+            "designated": valuation.get("designated"),
+            "label": valuation.get("label"),
+        },
+        "human_review_required": human_review,
+        "stages": stages,
+    }
+
+
+def metric_event_from_lifecycle(cfg: ShadowProofConfig, lifecycle: dict[str, Any], elapsed_ms: int | None = None) -> MetricEvent:
+    bilattice = lifecycle.get("bilattice", {}) if isinstance(lifecycle, dict) else {}
+    return MetricEvent(
+        timestamp=time.time(),
+        tenant_id=str(getattr(cfg, "default_tenant_id", "default")),
+        event_type="proof_lifecycle",
+        tool=str(lifecycle.get("tool", "unknown")),
+        status=str(lifecycle.get("status", "unknown")),
+        elapsed_ms=elapsed_ms,
+        lean_status=str(lifecycle.get("lean_status", "unknown")),
+        human_review_required=bool(lifecycle.get("human_review_required")),
+        bilattice_truth=bilattice.get("truth") if isinstance(bilattice, dict) else None,
+        bilattice_refutation=bilattice.get("refutation") if isinstance(bilattice, dict) else None,
+        lifecycle_stage="routing_decision",
+        metadata={"lifecycle": lifecycle},
+    )
 
 
 def escape_label(s: str) -> str:

@@ -2,7 +2,7 @@
 
 This document is part of the diligence packet for ShadowProof Bridge.  It
 describes what the package does and does not protect against, the
-hardening applied in v0.25.1, v0.25.2, v0.25.3, v0.25.4, v0.25.5, and v0.25.6, and how to report
+hardening applied in v0.25.1, v0.25.2, v0.25.3, v0.25.4, v0.25.5, v0.25.6, and v0.25.7, and how to report
 further issues.
 
 ## Threat model summary
@@ -39,7 +39,7 @@ remediated in v0.25.1.  See `CHANGELOG.md` for full IDs and tests.
 | CRIT-3a | `multi_tenant` mode let any token claim any tenant               | Tenant is bound to the credential in both modes; mismatched `tenant_id` in payload fails auth. |
 | CRIT-3b | `tenant_dir` accepted `..` / `....` as path segments             | Path-unsafe tenant ids are rejected before any filesystem operation; verified by `relative_to`. |
 
-Regression tests for these defects are in `tests/test_security_regressions.py`; v0.25.2 additions are in `tests/test_v25_2_security_hardening.py`; v0.25.3 boundary hardening tests are in `tests/test_v25_3_boundary_hardening.py`; v0.25.4 local-simulation tests are in `tests/test_v25_4_local_simulation.py`; v0.25.5 acquisition-clean regressions are in `tests/test_v25_5_acquisition_clean.py`; v0.25.6 release-artifact and math-drift tests are in `tests/test_v25_6_release_artifact_clean.py`.
+Regression tests for these defects are in `tests/test_security_regressions.py`; v0.25.2 additions are in `tests/test_v25_2_security_hardening.py`; v0.25.3 boundary hardening tests are in `tests/test_v25_3_boundary_hardening.py`; v0.25.4 local-simulation tests are in `tests/test_v25_4_local_simulation.py`; v0.25.5 acquisition-clean regressions are in `tests/test_v25_5_acquisition_clean.py`; v0.25.6 release-artifact and math-drift tests are in `tests/test_v25_6_release_artifact_clean.py`; v0.25.7 Lean governance tests are in `tests/test_v25_7_shadowhott_governance.py`.
 
 
 ## Additional hardening applied in v0.25.2
@@ -146,3 +146,14 @@ v0.25.6 closes the release-artifact and math-drift issues found after v0.25.5:
 - Local Lean stdout/stderr retained by the developer runner is capped and truncated.
 - Bilattice coordinate dictionaries require real JSON booleans; string truthiness coercion is rejected.
 - The bilattice self-check now includes join, absorption, and De Morgan duality laws in addition to the order-two involution.
+
+
+## Additional hardening applied in v0.25.7
+
+v0.25.7 adds a Lean-side reference formalization for the finite ShadowHoTT governance core: bilattice laws, disposition routing, theorem-fingerprint-preserving patch morphisms, and No-Glutty-J safety.  This is not a full HoTT/cubical/univalence extension and adds no new production axioms.
+
+## Additional hardening and observability applied in v0.25.8
+
+v0.25.8 adds audit-driven evaluation, lifecycle, and retrieval hooks without widening the execution boundary.  The new proof-lifecycle helpers are pure JSON/metric scaffolding; they do not execute model output or Lean code.  The retrieval indexer can emit lexical dependency metadata, declaration structure hashes, and LSH buckets, but it remains path-guarded under the same allowed-root policy as prior retrieval tools.
+
+The update improves measurement of human-review escalation accuracy and contradiction-bearing bilattice states.  It does not replace the production requirement for a hardened isolated Lean worker, external security review, or deployment-specific resource controls.

@@ -60,7 +60,7 @@ def liveness(payload: dict[str, Any] | None = None) -> dict[str, Any]:
     return {
         "status": "ok",
         "service": "shadowproof",
-        "version": "0.25.6",
+        "version": "0.25.8",
         "time": time.time(),
         "trace": make_trace(payload),
     }
@@ -113,7 +113,7 @@ def readiness(payload: dict[str, Any] | None = None) -> dict[str, Any]:
     return {
         "status": status,
         "service": "shadowproof",
-        "version": "0.25.6",
+        "version": "0.25.8",
         "checks": checks,
         "summary": {"fail": len(failed), "warn": len(warnings), "ok": sum(1 for c in checks if c["status"] == "ok")},
         "trace": make_trace(payload),
@@ -127,7 +127,7 @@ def service_status(payload: dict[str, Any] | None = None) -> dict[str, Any]:
     return {
         "status": "ok" if ready["status"] in {"ready", "degraded"} else "not_ready",
         "service": "shadowproof",
-        "version": "0.25.6",
+        "version": "0.25.8",
         "liveness": live,
         "readiness": ready,
         "error_taxonomy_count": len(ERROR_TAXONOMY),

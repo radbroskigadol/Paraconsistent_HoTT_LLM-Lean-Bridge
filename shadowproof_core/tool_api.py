@@ -16,7 +16,7 @@ from .admin import tenant_report, delete_tenant_data
 from .adapters import adapter_catalog
 from .config import load_config
 from .auth import require_request_allowed
-from .observability import metrics_report, prometheus_text, record_metric, MetricEvent
+from .observability import metrics_report, prometheus_text, record_metric, MetricEvent, make_proof_lifecycle_trace
 from .storage import retention_sweep, store_event
 from .review import create_review_packet
 from .product import product_readiness_report
@@ -585,6 +585,13 @@ def shadowproof_demorgan_symmetry(payload: dict[str, Any] | None = None) -> dict
         "status": "ok",
         "symmetry": demorgan_order_two_report(),
         "lean_formalization": "lean_project_template/ShadowProof/DemorganSymmetry.lean",
+        "lean_governance_formalizations": [
+            "lean_project_template/ShadowProof/BilatticeCore.lean",
+            "lean_project_template/ShadowProof/Routing.lean",
+            "lean_project_template/ShadowProof/PatchMorphism.lean",
+            "lean_project_template/ShadowProof/NoGluttyJ.lean",
+        ],
+        "formalization_scope": "finite ShadowHoTT governance core: bilattice laws, routing invariants, fingerprint-preserving patch morphisms, and No-Glutty-J safety; not a full HoTT implementation",
     }
 
 
@@ -1260,11 +1267,13 @@ def shadowproof_error_taxonomy(payload: dict[str, Any] | None = None) -> dict[st
 
 def shadowproof_trace_envelope(payload: dict[str, Any] | None = None) -> dict[str, Any]:
     payload = payload or {}
+    response = payload.get("response") if isinstance(payload.get("response"), dict) else {}
     return {
         "request_id": str(payload.get("request_id", "shadowproof_trace_envelope")),
         "tool": "shadowproof_trace_envelope",
         "status": "ok",
         "trace": make_trace(payload),
+        "proof_lifecycle": make_proof_lifecycle_trace(payload, response),
     }
 
 

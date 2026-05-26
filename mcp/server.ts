@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 const server = new McpServer(
-  { name: "ShadowProof Lean Bridge", version: "0.25.6" },
+  { name: "ShadowProof Lean Bridge", version: "0.25.8" },
   { capabilities: { tools: {} } }
 );
 

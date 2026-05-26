@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-API_VERSION = "0.25.6"
+API_VERSION = "0.25.8"
 
 
 def build_openapi_spec() -> dict[str, Any]:
