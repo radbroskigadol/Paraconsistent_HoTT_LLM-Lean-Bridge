@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofToolOutput",
+  "type": "object",
+  "required": [
+    "request_id",
+    "tool",
+    "status",
+    "lean_status",
+    "diagnostics"
+  ],
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "tool": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ok",
+        "rejected",
+        "error",
+        "needs_repair",
+        "unchecked"
+      ]
+    },
+    "lean_status": {
+      "type": "string",
+      "enum": [
+        "accepted",
+        "rejected",
+        "not_run",
+        "not_available",
+        "timeout"
+      ]
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "theorem_fingerprint": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "proof_graph": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "patches": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "certificate": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "final_lean_code": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "raw_lean_stdout": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "raw_lean_stderr": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofCreateDomainPackInput",
+  "type": "object",
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "domain": {
+      "type": "string",
+      "maxLength": 128
+    },
+    "display_name": {
+      "type": "string",
+      "maxLength": 256
+    },
+    "owner": {
+      "type": "string",
+      "maxLength": 256
+    },
+    "version": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 4000
+    },
+    "imports": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "common_tactics": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "notation_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "definition_hints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "retrieval_keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "drift_traps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "theorems": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "eval_cases": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "output_path": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofDomainPack",
+  "type": "object",
+  "required": [
+    "domain",
+    "display_name",
+    "imports",
+    "common_tactics",
+    "theorems",
+    "drift_traps"
+  ],
+  "properties": {
+    "domain": {
+      "type": "string"
+    },
+    "display_name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "owner": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "imports": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "common_tactics": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "notation_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "definition_hints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "retrieval_keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "drift_traps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "theorems": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "statement"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "statement": {
+            "type": "string"
+          },
+          "use_when": {
+            "type": "string"
+          },
+          "example": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "import_hint": {
+            "type": "string"
+          },
+          "avoid_when": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "eval_cases": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "metadata": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

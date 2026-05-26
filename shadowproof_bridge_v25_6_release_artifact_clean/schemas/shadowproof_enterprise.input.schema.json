@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofEnterpriseToolInput",
+  "type": "object",
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "tenant_id": {
+      "type": "string"
+    },
+    "provider": {
+      "type": "string"
+    },
+    "model_id": {
+      "type": "string"
+    },
+    "prompt": {
+      "type": "string"
+    },
+    "input_tokens": {
+      "type": "integer"
+    },
+    "output_tokens": {
+      "type": "integer"
+    },
+    "root": {
+      "type": "string"
+    },
+    "config": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

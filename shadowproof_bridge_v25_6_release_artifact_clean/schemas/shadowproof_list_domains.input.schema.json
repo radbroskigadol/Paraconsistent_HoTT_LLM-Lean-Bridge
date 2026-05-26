@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofListDomainsInput",
+  "type": "object",
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "domain_dirs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 32
+    }
+  },
+  "additionalProperties": false
+}

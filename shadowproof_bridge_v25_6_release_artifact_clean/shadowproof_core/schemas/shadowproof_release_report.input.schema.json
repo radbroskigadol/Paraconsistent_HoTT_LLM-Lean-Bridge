@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofReleaseReportInput",
+  "type": "object",
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "release_id": {
+      "type": "string"
+    },
+    "release_mode": {
+      "type": "string",
+      "enum": [
+        "pilot",
+        "enterprise_ga"
+      ]
+    },
+    "regression_suite_path": {
+      "type": "string"
+    },
+    "output_dir": {
+      "type": "string"
+    },
+    "license_scan_payload": {
+      "type": "object"
+    },
+    "domain_pack_registry_payload": {
+      "type": "object"
+    },
+    "proof_artifact_registry_payload": {
+      "type": "object"
+    },
+    "include_existing_release_gate": {
+      "type": "boolean"
+    },
+    "release_gate_payload": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

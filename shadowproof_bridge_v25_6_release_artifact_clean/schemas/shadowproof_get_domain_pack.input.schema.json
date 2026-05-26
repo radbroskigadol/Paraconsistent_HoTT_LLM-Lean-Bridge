@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofGetDomainPackInput",
+  "type": "object",
+  "required": [
+    "domain"
+  ],
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "domain": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "domain_dirs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 32
+    }
+  },
+  "additionalProperties": false
+}

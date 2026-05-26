@@ -1,0 +1,3456 @@
+[
+  {
+    "name": "lean_check",
+    "description": "Check a Lean 4 proof attempt under a conservative policy and return structured diagnostics. This tool does not repair proofs.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "LeanCheckInput",
+      "type": "object",
+      "required": [
+        "request_id",
+        "lean_code"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "lean_code": {
+          "type": "string"
+        },
+        "target": {
+          "type": "object",
+          "properties": {
+            "system": {
+              "type": "string",
+              "enum": [
+                "lean4"
+              ]
+            },
+            "imports": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "allow_sorry": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": true
+        },
+        "policy": {
+          "type": "object",
+          "properties": {
+            "timeout_seconds": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 300
+            },
+            "security_level": {
+              "type": "string",
+              "enum": [
+                "conservative",
+                "permissive"
+              ]
+            },
+            "return_code": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "outputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofToolOutput",
+      "type": "object",
+      "required": [
+        "request_id",
+        "tool",
+        "status",
+        "lean_status",
+        "diagnostics"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "tool": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "ok",
+            "rejected",
+            "error",
+            "needs_repair",
+            "unchecked"
+          ]
+        },
+        "lean_status": {
+          "type": "string",
+          "enum": [
+            "accepted",
+            "rejected",
+            "not_run",
+            "not_available",
+            "timeout"
+          ]
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "theorem_fingerprint": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "proof_graph": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "patches": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "certificate": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "final_lean_code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "raw_lean_stdout": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "raw_lean_stderr": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_validate",
+    "description": "Translate a constrained natural-language or direct Lean proof attempt into Lean, run guarded repair iterations, and return Lean validation diagnostics and a certificate if accepted.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofValidateInput",
+      "type": "object",
+      "required": [
+        "request_id"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "validate"
+          ],
+          "default": "validate"
+        },
+        "nl_problem": {
+          "type": "object",
+          "properties": {
+            "context": {
+              "type": "string"
+            },
+            "theorem": {
+              "type": "string"
+            },
+            "proof": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "lean_code": {
+          "type": "string"
+        },
+        "target": {
+          "type": "object",
+          "properties": {
+            "system": {
+              "type": "string",
+              "enum": [
+                "lean4"
+              ]
+            },
+            "imports": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "allow_sorry": {
+              "type": "boolean"
+            },
+            "theorem_name": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "policy": {
+          "type": "object",
+          "properties": {
+            "max_iterations": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 20
+            },
+            "timeout_seconds": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 300
+            },
+            "allow_theorem_mutation": {
+              "type": "boolean"
+            },
+            "security_level": {
+              "type": "string",
+              "enum": [
+                "conservative",
+                "permissive"
+              ]
+            },
+            "return_code": {
+              "type": "boolean"
+            },
+            "return_proof_graph": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "nl_problem"
+          ]
+        },
+        {
+          "required": [
+            "lean_code"
+          ]
+        }
+      ],
+      "additionalProperties": false
+    },
+    "outputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofToolOutput",
+      "type": "object",
+      "required": [
+        "request_id",
+        "tool",
+        "status",
+        "lean_status",
+        "diagnostics"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "tool": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "ok",
+            "rejected",
+            "error",
+            "needs_repair",
+            "unchecked"
+          ]
+        },
+        "lean_status": {
+          "type": "string",
+          "enum": [
+            "accepted",
+            "rejected",
+            "not_run",
+            "not_available",
+            "timeout"
+          ]
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "theorem_fingerprint": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "proof_graph": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "patches": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "certificate": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "final_lean_code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "raw_lean_stdout": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "raw_lean_stderr": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_check_draft",
+    "description": "Statically check an LLM DraftProposal for schema shape, theorem-lock drift, declared trust mismatches, and security policy. Does not run Lean.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofValidateDraftInput",
+      "type": "object",
+      "required": [
+        "request_id",
+        "draft"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "draft": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "title": "ShadowProofDraftProposal",
+          "type": "object",
+          "required": [
+            "proposal_id",
+            "source_language",
+            "target_system",
+            "theorem_name",
+            "imports",
+            "natural_language_theorem",
+            "natural_language_proof",
+            "lean_code",
+            "theorem_fingerprint",
+            "proof_graph",
+            "nl_to_lean_map",
+            "declared_trust"
+          ],
+          "properties": {
+            "proposal_id": {
+              "type": "string"
+            },
+            "source_language": {
+              "type": "string",
+              "enum": [
+                "controlled_math_english",
+                "informal_math_english",
+                "direct_lean"
+              ]
+            },
+            "target_system": {
+              "type": "string",
+              "enum": [
+                "lean4"
+              ]
+            },
+            "theorem_name": {
+              "type": "string"
+            },
+            "imports": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "natural_language_theorem": {
+              "type": "string"
+            },
+            "natural_language_proof": {
+              "type": "string"
+            },
+            "lean_code": {
+              "type": "string"
+            },
+            "theorem_fingerprint": {
+              "type": "object",
+              "required": [
+                "theorem_family",
+                "objects",
+                "assumptions",
+                "conclusion",
+                "forbidden_drift",
+                "source_theorem"
+              ],
+              "properties": {
+                "theorem_family": {
+                  "type": "string"
+                },
+                "objects": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "assumptions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "conclusion": {
+                  "type": "string"
+                },
+                "forbidden_drift": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "source_theorem": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            },
+            "proof_graph": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "source_text",
+                  "truth",
+                  "falsity",
+                  "boundary"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "source_text": {
+                    "type": "string"
+                  },
+                  "truth": {
+                    "type": "object",
+                    "required": [
+                      "claim",
+                      "dependencies",
+                      "lean_goal"
+                    ],
+                    "properties": {
+                      "claim": {
+                        "type": "string"
+                      },
+                      "dependencies": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "lean_goal": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "falsity": {
+                    "type": "object",
+                    "required": [
+                      "counterconditions",
+                      "counterexample_hint"
+                    ],
+                    "properties": {
+                      "counterconditions": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "counterexample_hint": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "boundary": {
+                    "type": "object",
+                    "required": [
+                      "ambiguities",
+                      "missing_data",
+                      "lean_error_excerpt"
+                    ],
+                    "properties": {
+                      "ambiguities": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "missing_data": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "lean_error_excerpt": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "nl_to_lean_map": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "source_step_id",
+                  "source_text",
+                  "lean_fragment",
+                  "intended_claim",
+                  "confidence"
+                ],
+                "properties": {
+                  "source_step_id": {
+                    "type": "string"
+                  },
+                  "source_text": {
+                    "type": "string"
+                  },
+                  "lean_fragment": {
+                    "type": "string"
+                  },
+                  "intended_claim": {
+                    "type": "string"
+                  },
+                  "confidence": {
+                    "type": "string",
+                    "enum": [
+                      "low",
+                      "medium",
+                      "high"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "declared_trust": {
+              "type": "object",
+              "required": [
+                "uses_sorry",
+                "uses_axioms",
+                "mutates_theorem",
+                "notes"
+              ],
+              "properties": {
+                "uses_sorry": {
+                  "type": "boolean"
+                },
+                "uses_axioms": {
+                  "type": "boolean"
+                },
+                "mutates_theorem": {
+                  "type": "boolean"
+                },
+                "notes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "additionalProperties": false
+            },
+            "metadata": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "target": {
+          "type": "object",
+          "required": [
+            "system",
+            "allow_sorry"
+          ],
+          "properties": {
+            "system": {
+              "type": "string",
+              "enum": [
+                "lean4"
+              ]
+            },
+            "imports": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "allow_sorry": {
+              "type": "boolean"
+            },
+            "theorem_name": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "policy": {
+          "type": "object",
+          "required": [
+            "max_iterations",
+            "timeout_seconds",
+            "allow_theorem_mutation",
+            "security_level",
+            "return_code",
+            "return_proof_graph"
+          ],
+          "properties": {
+            "max_iterations": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 20
+            },
+            "timeout_seconds": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 300
+            },
+            "allow_theorem_mutation": {
+              "type": "boolean"
+            },
+            "security_level": {
+              "type": "string",
+              "enum": [
+                "conservative",
+                "permissive"
+              ]
+            },
+            "return_code": {
+              "type": "boolean"
+            },
+            "return_proof_graph": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "outputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofToolOutput",
+      "type": "object",
+      "required": [
+        "request_id",
+        "tool",
+        "status",
+        "lean_status",
+        "diagnostics"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "tool": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "ok",
+            "rejected",
+            "error",
+            "needs_repair",
+            "unchecked"
+          ]
+        },
+        "lean_status": {
+          "type": "string",
+          "enum": [
+            "accepted",
+            "rejected",
+            "not_run",
+            "not_available",
+            "timeout"
+          ]
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "theorem_fingerprint": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "proof_graph": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "patches": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "certificate": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "final_lean_code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "raw_lean_stdout": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "raw_lean_stderr": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_validate_draft",
+    "description": "Validate an LLM DraftProposal by checking theorem-lock/security constraints, running Lean, applying guarded repair when possible, and returning a certificate if Lean accepts.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofValidateDraftInput",
+      "type": "object",
+      "required": [
+        "request_id",
+        "draft"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "draft": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "title": "ShadowProofDraftProposal",
+          "type": "object",
+          "required": [
+            "proposal_id",
+            "source_language",
+            "target_system",
+            "theorem_name",
+            "imports",
+            "natural_language_theorem",
+            "natural_language_proof",
+            "lean_code",
+            "theorem_fingerprint",
+            "proof_graph",
+            "nl_to_lean_map",
+            "declared_trust"
+          ],
+          "properties": {
+            "proposal_id": {
+              "type": "string"
+            },
+            "source_language": {
+              "type": "string",
+              "enum": [
+                "controlled_math_english",
+                "informal_math_english",
+                "direct_lean"
+              ]
+            },
+            "target_system": {
+              "type": "string",
+              "enum": [
+                "lean4"
+              ]
+            },
+            "theorem_name": {
+              "type": "string"
+            },
+            "imports": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "natural_language_theorem": {
+              "type": "string"
+            },
+            "natural_language_proof": {
+              "type": "string"
+            },
+            "lean_code": {
+              "type": "string"
+            },
+            "theorem_fingerprint": {
+              "type": "object",
+              "required": [
+                "theorem_family",
+                "objects",
+                "assumptions",
+                "conclusion",
+                "forbidden_drift",
+                "source_theorem"
+              ],
+              "properties": {
+                "theorem_family": {
+                  "type": "string"
+                },
+                "objects": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "assumptions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "conclusion": {
+                  "type": "string"
+                },
+                "forbidden_drift": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "source_theorem": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            },
+            "proof_graph": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "source_text",
+                  "truth",
+                  "falsity",
+                  "boundary"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "source_text": {
+                    "type": "string"
+                  },
+                  "truth": {
+                    "type": "object",
+                    "required": [
+                      "claim",
+                      "dependencies",
+                      "lean_goal"
+                    ],
+                    "properties": {
+                      "claim": {
+                        "type": "string"
+                      },
+                      "dependencies": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "lean_goal": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "falsity": {
+                    "type": "object",
+                    "required": [
+                      "counterconditions",
+                      "counterexample_hint"
+                    ],
+                    "properties": {
+                      "counterconditions": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "counterexample_hint": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "boundary": {
+                    "type": "object",
+                    "required": [
+                      "ambiguities",
+                      "missing_data",
+                      "lean_error_excerpt"
+                    ],
+                    "properties": {
+                      "ambiguities": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "missing_data": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "lean_error_excerpt": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "nl_to_lean_map": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "source_step_id",
+                  "source_text",
+                  "lean_fragment",
+                  "intended_claim",
+                  "confidence"
+                ],
+                "properties": {
+                  "source_step_id": {
+                    "type": "string"
+                  },
+                  "source_text": {
+                    "type": "string"
+                  },
+                  "lean_fragment": {
+                    "type": "string"
+                  },
+                  "intended_claim": {
+                    "type": "string"
+                  },
+                  "confidence": {
+                    "type": "string",
+                    "enum": [
+                      "low",
+                      "medium",
+                      "high"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "declared_trust": {
+              "type": "object",
+              "required": [
+                "uses_sorry",
+                "uses_axioms",
+                "mutates_theorem",
+                "notes"
+              ],
+              "properties": {
+                "uses_sorry": {
+                  "type": "boolean"
+                },
+                "uses_axioms": {
+                  "type": "boolean"
+                },
+                "mutates_theorem": {
+                  "type": "boolean"
+                },
+                "notes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "additionalProperties": false
+            },
+            "metadata": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "target": {
+          "type": "object",
+          "required": [
+            "system",
+            "allow_sorry"
+          ],
+          "properties": {
+            "system": {
+              "type": "string",
+              "enum": [
+                "lean4"
+              ]
+            },
+            "imports": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "allow_sorry": {
+              "type": "boolean"
+            },
+            "theorem_name": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "policy": {
+          "type": "object",
+          "required": [
+            "max_iterations",
+            "timeout_seconds",
+            "allow_theorem_mutation",
+            "security_level",
+            "return_code",
+            "return_proof_graph"
+          ],
+          "properties": {
+            "max_iterations": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 20
+            },
+            "timeout_seconds": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 300
+            },
+            "allow_theorem_mutation": {
+              "type": "boolean"
+            },
+            "security_level": {
+              "type": "string",
+              "enum": [
+                "conservative",
+                "permissive"
+              ]
+            },
+            "return_code": {
+              "type": "boolean"
+            },
+            "return_proof_graph": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "outputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofToolOutput",
+      "type": "object",
+      "required": [
+        "request_id",
+        "tool",
+        "status",
+        "lean_status",
+        "diagnostics"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "tool": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "ok",
+            "rejected",
+            "error",
+            "needs_repair",
+            "unchecked"
+          ]
+        },
+        "lean_status": {
+          "type": "string",
+          "enum": [
+            "accepted",
+            "rejected",
+            "not_run",
+            "not_available",
+            "timeout"
+          ]
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "theorem_fingerprint": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "proof_graph": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "patches": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "certificate": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "final_lean_code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "raw_lean_stdout": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "raw_lean_stderr": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_draft_schema",
+    "description": "Return the DraftProposal JSON Schema that the LLM should use when proposing Lean code.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "outputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofDraftProposal",
+      "type": "object",
+      "required": [
+        "proposal_id",
+        "source_language",
+        "target_system",
+        "theorem_name",
+        "imports",
+        "natural_language_theorem",
+        "natural_language_proof",
+        "lean_code",
+        "theorem_fingerprint",
+        "proof_graph",
+        "nl_to_lean_map",
+        "declared_trust"
+      ],
+      "properties": {
+        "proposal_id": {
+          "type": "string"
+        },
+        "source_language": {
+          "type": "string",
+          "enum": [
+            "controlled_math_english",
+            "informal_math_english",
+            "direct_lean"
+          ]
+        },
+        "target_system": {
+          "type": "string",
+          "enum": [
+            "lean4"
+          ]
+        },
+        "theorem_name": {
+          "type": "string"
+        },
+        "imports": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "natural_language_theorem": {
+          "type": "string"
+        },
+        "natural_language_proof": {
+          "type": "string"
+        },
+        "lean_code": {
+          "type": "string"
+        },
+        "theorem_fingerprint": {
+          "type": "object",
+          "required": [
+            "theorem_family",
+            "objects",
+            "assumptions",
+            "conclusion",
+            "forbidden_drift",
+            "source_theorem"
+          ],
+          "properties": {
+            "theorem_family": {
+              "type": "string"
+            },
+            "objects": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "assumptions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "conclusion": {
+              "type": "string"
+            },
+            "forbidden_drift": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "source_theorem": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "proof_graph": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "source_text",
+              "truth",
+              "falsity",
+              "boundary"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "source_text": {
+                "type": "string"
+              },
+              "truth": {
+                "type": "object",
+                "required": [
+                  "claim",
+                  "dependencies",
+                  "lean_goal"
+                ],
+                "properties": {
+                  "claim": {
+                    "type": "string"
+                  },
+                  "dependencies": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "lean_goal": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "falsity": {
+                "type": "object",
+                "required": [
+                  "counterconditions",
+                  "counterexample_hint"
+                ],
+                "properties": {
+                  "counterconditions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "counterexample_hint": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "boundary": {
+                "type": "object",
+                "required": [
+                  "ambiguities",
+                  "missing_data",
+                  "lean_error_excerpt"
+                ],
+                "properties": {
+                  "ambiguities": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "missing_data": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "lean_error_excerpt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "nl_to_lean_map": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "source_step_id",
+              "source_text",
+              "lean_fragment",
+              "intended_claim",
+              "confidence"
+            ],
+            "properties": {
+              "source_step_id": {
+                "type": "string"
+              },
+              "source_text": {
+                "type": "string"
+              },
+              "lean_fragment": {
+                "type": "string"
+              },
+              "intended_claim": {
+                "type": "string"
+              },
+              "confidence": {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "declared_trust": {
+          "type": "object",
+          "required": [
+            "uses_sorry",
+            "uses_axioms",
+            "mutates_theorem",
+            "notes"
+          ],
+          "properties": {
+            "uses_sorry": {
+              "type": "boolean"
+            },
+            "uses_axioms": {
+              "type": "boolean"
+            },
+            "mutates_theorem": {
+              "type": "boolean"
+            },
+            "notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_record_outcome",
+    "description": "Record a Lean rejection/repair/acceptance outcome into privacy-conscious local memory for future repair prompt optimization.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofRecordOutcomeInput",
+      "type": "object",
+      "required": [
+        "request_id",
+        "outcome"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "rejected",
+            "improved",
+            "accepted",
+            "unchanged"
+          ]
+        },
+        "theorem_fingerprint": {
+          "type": "object"
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "lean_code": {
+          "type": "string"
+        },
+        "final_lean_code": {
+          "type": "string"
+        },
+        "repair_strategy": {
+          "type": "string"
+        },
+        "patch_kind": {
+          "type": "string"
+        },
+        "memory_path": {
+          "type": "string"
+        },
+        "privacy_mode": {
+          "type": "string",
+          "enum": [
+            "hash_only",
+            "redacted",
+            "raw_local"
+          ]
+        },
+        "learning_enabled": {
+          "type": "boolean"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofToolOutput",
+      "type": "object",
+      "required": [
+        "request_id",
+        "tool",
+        "status",
+        "lean_status",
+        "diagnostics"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "tool": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "ok",
+            "rejected",
+            "error",
+            "needs_repair",
+            "unchecked"
+          ]
+        },
+        "lean_status": {
+          "type": "string",
+          "enum": [
+            "accepted",
+            "rejected",
+            "not_run",
+            "not_available",
+            "timeout"
+          ]
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "theorem_fingerprint": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "proof_graph": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "patches": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "certificate": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "final_lean_code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "raw_lean_stdout": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "raw_lean_stderr": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_suggest_repair",
+    "description": "Suggest ranked repair strategies for a Lean rejection using templates and local rejection memory.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofRepairPromptInput",
+      "type": "object",
+      "required": [
+        "request_id",
+        "theorem_fingerprint",
+        "diagnostics"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "theorem_fingerprint": {
+          "type": "object"
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "final_lean_code": {
+          "type": "string"
+        },
+        "max_prompt_tokens": {
+          "type": "integer",
+          "minimum": 200,
+          "maximum": 4000
+        },
+        "memory_path": {
+          "type": "string"
+        },
+        "privacy_mode": {
+          "type": "string",
+          "enum": [
+            "hash_only",
+            "redacted",
+            "raw_local"
+          ]
+        },
+        "learning_enabled": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_compile_repair_prompt",
+    "description": "Compile compact LLM-facing repair instructions from Lean diagnostics, theorem fingerprint, and learned local memory.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofRepairPromptInput",
+      "type": "object",
+      "required": [
+        "request_id",
+        "theorem_fingerprint",
+        "diagnostics"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "theorem_fingerprint": {
+          "type": "object"
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "final_lean_code": {
+          "type": "string"
+        },
+        "max_prompt_tokens": {
+          "type": "integer",
+          "minimum": 200,
+          "maximum": 4000
+        },
+        "memory_path": {
+          "type": "string"
+        },
+        "privacy_mode": {
+          "type": "string",
+          "enum": [
+            "hash_only",
+            "redacted",
+            "raw_local"
+          ]
+        },
+        "learning_enabled": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_memory_stats",
+    "description": "Return summary statistics for local ShadowProof rejection memory.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "memory_path": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_env_info",
+    "description": "Capture Lean/Lake/Mathlib environment metadata for versioned validation certificates.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofEnvInfoInput",
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "target": {
+          "type": "object",
+          "properties": {
+            "system": {
+              "type": "string",
+              "enum": [
+                "lean4"
+              ]
+            }
+          },
+          "additionalProperties": true
+        },
+        "cwd": {
+          "type": "string"
+        },
+        "timeout_seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_eval",
+    "description": "Run a ShadowProof evaluation suite and report metrics: tokens per accepted proof, repair turns per accepted proof, and false theorem-drift escape rate.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofEvalSuite",
+      "type": "object",
+      "required": [
+        "suite_id",
+        "cases"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "suite_id": {
+          "type": "string"
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "case_id",
+              "kind"
+            ],
+            "properties": {
+              "case_id": {
+                "type": "string"
+              },
+              "kind": {
+                "type": "string"
+              },
+              "tool": {
+                "type": "string"
+              },
+              "input_file": {
+                "type": "string"
+              },
+              "input": {
+                "type": "object"
+              },
+              "expect_status": {
+                "type": "string"
+              },
+              "expect_lean_status": {
+                "type": "string"
+              },
+              "is_theorem_drift_trap": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_optimize_suggest",
+    "description": "Suggest an optimized policy action for a company/model/domain/subfield context using learned offline/online optimization data.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofOptimizationInput",
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "optimization_context": {
+          "type": "object",
+          "properties": {
+            "company_id": {
+              "type": "string"
+            },
+            "frontier_model_id": {
+              "type": "string"
+            },
+            "domain": {
+              "type": "string"
+            },
+            "subfield": {
+              "type": "string"
+            },
+            "task_type": {
+              "type": "string"
+            },
+            "theorem_family": {
+              "type": "string"
+            },
+            "diagnostic_kinds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "user_segment": {
+              "type": "string"
+            },
+            "deployment_stage": {
+              "type": "string"
+            },
+            "policy_version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": true
+        },
+        "optimization_action": {
+          "type": "object",
+          "properties": {
+            "repair_strategy": {
+              "type": "string"
+            },
+            "prompt_template": {
+              "type": "string"
+            },
+            "retrieval_profile": {
+              "type": "string"
+            },
+            "token_budget": {
+              "type": "integer"
+            },
+            "deterministic_repair_first": {
+              "type": "boolean"
+            },
+            "require_draft_schema_reminder": {
+              "type": "boolean"
+            },
+            "proof_graph_detail": {
+              "type": "string"
+            },
+            "escalation_model": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "theorem_fingerprint": {
+          "type": "object"
+        },
+        "events_path": {
+          "type": "string"
+        },
+        "policy_path": {
+          "type": "string"
+        },
+        "privacy_mode": {
+          "type": "string",
+          "enum": [
+            "hash_only",
+            "redacted",
+            "raw_local"
+          ]
+        },
+        "learning_enabled": {
+          "type": "boolean"
+        },
+        "exploration_rate": {
+          "type": "number"
+        },
+        "min_evidence": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_optimize_record",
+    "description": "Record an optimization event with context, action, outcome, and reward for future policy training.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofOptimizationInput",
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "optimization_context": {
+          "type": "object",
+          "properties": {
+            "company_id": {
+              "type": "string"
+            },
+            "frontier_model_id": {
+              "type": "string"
+            },
+            "domain": {
+              "type": "string"
+            },
+            "subfield": {
+              "type": "string"
+            },
+            "task_type": {
+              "type": "string"
+            },
+            "theorem_family": {
+              "type": "string"
+            },
+            "diagnostic_kinds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "user_segment": {
+              "type": "string"
+            },
+            "deployment_stage": {
+              "type": "string"
+            },
+            "policy_version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": true
+        },
+        "optimization_action": {
+          "type": "object",
+          "properties": {
+            "repair_strategy": {
+              "type": "string"
+            },
+            "prompt_template": {
+              "type": "string"
+            },
+            "retrieval_profile": {
+              "type": "string"
+            },
+            "token_budget": {
+              "type": "integer"
+            },
+            "deterministic_repair_first": {
+              "type": "boolean"
+            },
+            "require_draft_schema_reminder": {
+              "type": "boolean"
+            },
+            "proof_graph_detail": {
+              "type": "string"
+            },
+            "escalation_model": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "theorem_fingerprint": {
+          "type": "object"
+        },
+        "events_path": {
+          "type": "string"
+        },
+        "policy_path": {
+          "type": "string"
+        },
+        "privacy_mode": {
+          "type": "string",
+          "enum": [
+            "hash_only",
+            "redacted",
+            "raw_local"
+          ]
+        },
+        "learning_enabled": {
+          "type": "boolean"
+        },
+        "exploration_rate": {
+          "type": "number"
+        },
+        "min_evidence": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_optimize_train",
+    "description": "Train a simple contextual bandit-style policy from recorded optimization events.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofOptimizationInput",
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "optimization_context": {
+          "type": "object",
+          "properties": {
+            "company_id": {
+              "type": "string"
+            },
+            "frontier_model_id": {
+              "type": "string"
+            },
+            "domain": {
+              "type": "string"
+            },
+            "subfield": {
+              "type": "string"
+            },
+            "task_type": {
+              "type": "string"
+            },
+            "theorem_family": {
+              "type": "string"
+            },
+            "diagnostic_kinds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "user_segment": {
+              "type": "string"
+            },
+            "deployment_stage": {
+              "type": "string"
+            },
+            "policy_version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": true
+        },
+        "optimization_action": {
+          "type": "object",
+          "properties": {
+            "repair_strategy": {
+              "type": "string"
+            },
+            "prompt_template": {
+              "type": "string"
+            },
+            "retrieval_profile": {
+              "type": "string"
+            },
+            "token_budget": {
+              "type": "integer"
+            },
+            "deterministic_repair_first": {
+              "type": "boolean"
+            },
+            "require_draft_schema_reminder": {
+              "type": "boolean"
+            },
+            "proof_graph_detail": {
+              "type": "string"
+            },
+            "escalation_model": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "theorem_fingerprint": {
+          "type": "object"
+        },
+        "events_path": {
+          "type": "string"
+        },
+        "policy_path": {
+          "type": "string"
+        },
+        "privacy_mode": {
+          "type": "string",
+          "enum": [
+            "hash_only",
+            "redacted",
+            "raw_local"
+          ]
+        },
+        "learning_enabled": {
+          "type": "boolean"
+        },
+        "exploration_rate": {
+          "type": "number"
+        },
+        "min_evidence": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_optimize_stats",
+    "description": "Return optimization memory and policy statistics.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofOptimizationInput",
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "optimization_context": {
+          "type": "object",
+          "properties": {
+            "company_id": {
+              "type": "string"
+            },
+            "frontier_model_id": {
+              "type": "string"
+            },
+            "domain": {
+              "type": "string"
+            },
+            "subfield": {
+              "type": "string"
+            },
+            "task_type": {
+              "type": "string"
+            },
+            "theorem_family": {
+              "type": "string"
+            },
+            "diagnostic_kinds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "user_segment": {
+              "type": "string"
+            },
+            "deployment_stage": {
+              "type": "string"
+            },
+            "policy_version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": true
+        },
+        "optimization_action": {
+          "type": "object",
+          "properties": {
+            "repair_strategy": {
+              "type": "string"
+            },
+            "prompt_template": {
+              "type": "string"
+            },
+            "retrieval_profile": {
+              "type": "string"
+            },
+            "token_budget": {
+              "type": "integer"
+            },
+            "deterministic_repair_first": {
+              "type": "boolean"
+            },
+            "require_draft_schema_reminder": {
+              "type": "boolean"
+            },
+            "proof_graph_detail": {
+              "type": "string"
+            },
+            "escalation_model": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "theorem_fingerprint": {
+          "type": "object"
+        },
+        "events_path": {
+          "type": "string"
+        },
+        "policy_path": {
+          "type": "string"
+        },
+        "privacy_mode": {
+          "type": "string",
+          "enum": [
+            "hash_only",
+            "redacted",
+            "raw_local"
+          ]
+        },
+        "learning_enabled": {
+          "type": "boolean"
+        },
+        "exploration_rate": {
+          "type": "number"
+        },
+        "min_evidence": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_optimize_export_policy",
+    "description": "Export the current learned optimization policy for deployment/versioning.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofOptimizationInput",
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "optimization_context": {
+          "type": "object",
+          "properties": {
+            "company_id": {
+              "type": "string"
+            },
+            "frontier_model_id": {
+              "type": "string"
+            },
+            "domain": {
+              "type": "string"
+            },
+            "subfield": {
+              "type": "string"
+            },
+            "task_type": {
+              "type": "string"
+            },
+            "theorem_family": {
+              "type": "string"
+            },
+            "diagnostic_kinds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "user_segment": {
+              "type": "string"
+            },
+            "deployment_stage": {
+              "type": "string"
+            },
+            "policy_version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": true
+        },
+        "optimization_action": {
+          "type": "object",
+          "properties": {
+            "repair_strategy": {
+              "type": "string"
+            },
+            "prompt_template": {
+              "type": "string"
+            },
+            "retrieval_profile": {
+              "type": "string"
+            },
+            "token_budget": {
+              "type": "integer"
+            },
+            "deterministic_repair_first": {
+              "type": "boolean"
+            },
+            "require_draft_schema_reminder": {
+              "type": "boolean"
+            },
+            "proof_graph_detail": {
+              "type": "string"
+            },
+            "escalation_model": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "theorem_fingerprint": {
+          "type": "object"
+        },
+        "events_path": {
+          "type": "string"
+        },
+        "policy_path": {
+          "type": "string"
+        },
+        "privacy_mode": {
+          "type": "string",
+          "enum": [
+            "hash_only",
+            "redacted",
+            "raw_local"
+          ]
+        },
+        "learning_enabled": {
+          "type": "boolean"
+        },
+        "exploration_rate": {
+          "type": "number"
+        },
+        "min_evidence": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_list_domains",
+    "description": "List available mathematical domain packs for retrieval and formalization guidance.",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_get_domain_pack",
+    "description": "Return a specific domain pack with imports, tactics, theorem names, notation notes, and theorem-drift traps.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_retrieve_mathlib",
+    "description": "Retrieve Mathlib/domain-pack candidates for a natural-language theorem or Lean diagnostic query.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofMathlibRetrievalInput",
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "query": {
+          "type": "string"
+        },
+        "domains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "domain_dirs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "index_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "include_prompt_context": {
+          "type": "boolean"
+        },
+        "max_prompt_chars": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 20000
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_compile_formalization_context",
+    "description": "Compile prompt-ready Mathlib/domain context for a frontier model before it emits DraftProposal JSON.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofMathlibRetrievalInput",
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "query": {
+          "type": "string"
+        },
+        "domains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "domain_dirs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "index_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "include_prompt_context": {
+          "type": "boolean"
+        },
+        "max_prompt_chars": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 20000
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_index_mathlib",
+    "description": "Index local Mathlib/Lean source files into a lightweight JSONL retrieval index.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofIndexMathlibInput",
+      "type": "object",
+      "required": [
+        "source_dirs",
+        "output_path"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "source_dirs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "output_path": {
+          "type": "string"
+        },
+        "max_files": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "include_private": {
+          "type": "boolean"
+        },
+        "default_import": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_retrieve_for_diagnostics",
+    "description": "Extract a retrieval query from Lean diagnostics/theorem fingerprint and retrieve relevant Mathlib/domain-pack candidates.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofDiagnosticRetrievalInput",
+      "type": "object",
+      "required": [
+        "request_id",
+        "theorem_fingerprint",
+        "diagnostics"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "theorem_fingerprint": {
+          "type": "object"
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "final_lean_code": {
+          "type": "string"
+        },
+        "lean_code": {
+          "type": "string"
+        },
+        "domains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "domain_dirs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "index_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "retrieval_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50
+        },
+        "max_prompt_chars": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 20000
+        },
+        "auto_retrieve": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_compile_repair_context",
+    "description": "Compile retrieval-augmented repair context from theorem fingerprint, Lean diagnostics, and Mathlib/domain retrieval.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofDiagnosticRetrievalInput",
+      "type": "object",
+      "required": [
+        "request_id",
+        "theorem_fingerprint",
+        "diagnostics"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "theorem_fingerprint": {
+          "type": "object"
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "final_lean_code": {
+          "type": "string"
+        },
+        "lean_code": {
+          "type": "string"
+        },
+        "domains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "domain_dirs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "index_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "retrieval_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50
+        },
+        "max_prompt_chars": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 20000
+        },
+        "auto_retrieve": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_shadowhott_state",
+    "description": "Build explicit ShadowHoTT state with truth/falsity/boundary valuation, obstructions, patch morphisms, and verdict.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofShadowHoTTStateInput",
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "lean_status": {
+          "type": "string"
+        },
+        "theorem_fingerprint": {
+          "type": "object"
+        },
+        "proof_graph": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "patches": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "certificate": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "final_lean_code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "retrieval": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_shadowhott_audit",
+    "description": "Audit ShadowHoTT state invariants: normalized valuation, blocking obstructions, theorem-safe patch morphisms.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofShadowHoTTStateInput",
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "lean_status": {
+          "type": "string"
+        },
+        "theorem_fingerprint": {
+          "type": "object"
+        },
+        "proof_graph": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "patches": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "certificate": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "final_lean_code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "retrieval": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_regression_suite",
+    "description": "Run the full ShadowProof bridge regression suite across ShadowHoTT routing, retrieval, prompt efficiency, theorem-drift traps, and Lean validation cases.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofRegressionSuite",
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "suite_id": {
+          "type": "string"
+        },
+        "shadowhott_eval": {
+          "type": [
+            "object",
+            "string"
+          ]
+        },
+        "retrieval_eval": {
+          "type": [
+            "object",
+            "string"
+          ]
+        },
+        "prompt_efficiency_eval": {
+          "type": [
+            "object",
+            "string"
+          ]
+        },
+        "bridge_eval": {
+          "type": [
+            "object",
+            "string"
+          ]
+        },
+        "lean_validation_eval": {
+          "type": [
+            "object",
+            "string"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_config_check",
+    "description": "Return resolved commercial configuration, sandbox, and deployment settings.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofCommercialToolInput",
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "bearer_token": {
+          "type": "string"
+        },
+        "config": {
+          "type": "object"
+        },
+        "limit": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_product_readiness",
+    "description": "Report commercial readiness gaps, release gates, and next steps.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofCommercialToolInput",
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "bearer_token": {
+          "type": "string"
+        },
+        "config": {
+          "type": "object"
+        },
+        "limit": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_metrics_report",
+    "description": "Summarize local ShadowProof metrics.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofCommercialToolInput",
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "bearer_token": {
+          "type": "string"
+        },
+        "config": {
+          "type": "object"
+        },
+        "limit": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_prometheus_metrics",
+    "description": "Export ShadowProof metrics in Prometheus text format.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofCommercialToolInput",
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "bearer_token": {
+          "type": "string"
+        },
+        "config": {
+          "type": "object"
+        },
+        "limit": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_retention_sweep",
+    "description": "Apply the configured data-retention policy to local JSONL tenant storage.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofCommercialToolInput",
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "bearer_token": {
+          "type": "string"
+        },
+        "config": {
+          "type": "object"
+        },
+        "limit": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_create_review_packet",
+    "description": "Create a human-review packet with theorem fingerprint, diagnostics, Lean diff, certificate, and ShadowHoTT state.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofCommercialToolInput",
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "bearer_token": {
+          "type": "string"
+        },
+        "config": {
+          "type": "object"
+        },
+        "limit": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_lean_worker_check",
+    "description": "Check Lean code through the configured local/http/disabled Lean worker.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "ShadowProofCommercialToolInput",
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "bearer_token": {
+          "type": "string"
+        },
+        "config": {
+          "type": "object"
+        },
+        "limit": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "shadowproof_training_capacity_plan",
+    "description": "Offline trainable-parameter capacity planner for buyer-side model/training integration.",
+    "input_schema": "schemas/shadowproof_training_capacity_plan.input.schema.json"
+  },
+  {
+    "name": "shadowproof_demorgan_symmetry",
+    "description": "Report executable De Morgan order-two coordinate symmetry and Lean formalization path.",
+    "input_schema": "schemas/shadowproof_demorgan_symmetry.input.schema.json"
+  }
+]

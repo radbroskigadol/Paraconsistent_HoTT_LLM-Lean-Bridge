@@ -1,0 +1,13 @@
+ShadowProof Bridge
+Copyright (c) 2026 David Betzer. All rights reserved.
+
+This private diligence package includes first-party ShadowProof Bridge source code,
+documentation, schemas, tests, and local simulation assets. The package declares an
+external dependency on jsonschema for schema validation and optional production/dev
+dependencies listed in pyproject.toml. Lean, Mathlib, frontier model providers,
+Redis, Postgres, OpenTelemetry, Uvicorn, and MCP SDK assets are integration targets
+or optional dependencies and are not bundled as vendored third-party source in this
+archive.
+
+Recipients should run their own legal, open-source, export-control, security, and
+model-governance review before production use or acquisition close.

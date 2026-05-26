@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofRegressionSuite",
+  "type": "object",
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "suite_id": {
+      "type": "string"
+    },
+    "shadowhott_eval": {
+      "type": [
+        "object",
+        "string"
+      ]
+    },
+    "retrieval_eval": {
+      "type": [
+        "object",
+        "string"
+      ]
+    },
+    "prompt_efficiency_eval": {
+      "type": [
+        "object",
+        "string"
+      ]
+    },
+    "bridge_eval": {
+      "type": [
+        "object",
+        "string"
+      ]
+    },
+    "lean_validation_eval": {
+      "type": [
+        "object",
+        "string"
+      ]
+    }
+  },
+  "additionalProperties": true
+}

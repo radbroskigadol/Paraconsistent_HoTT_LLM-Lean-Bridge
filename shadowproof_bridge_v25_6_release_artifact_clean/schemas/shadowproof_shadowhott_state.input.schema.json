@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofShadowHoTTStateInput",
+  "type": "object",
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "lean_status": {
+      "type": "string"
+    },
+    "theorem_fingerprint": {
+      "type": "object"
+    },
+    "proof_graph": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "paths": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                },
+                "target": {
+                  "type": "string"
+                },
+                "label": {
+                  "$ref": "#/$defs/bilattice_label"
+                },
+                "witness": {
+                  "type": "string"
+                },
+                "kind": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": true
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "patches": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "certificate": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "final_lean_code": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "retrieval": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "bilattice_label": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "top",
+            "bottom",
+            "both",
+            "neither",
+            "proof",
+            "refuted",
+            "glut",
+            "gap"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string"
+            },
+            "truth_coordinate": {
+              "type": "boolean"
+            },
+            "refutation_coordinate": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": true
+        }
+      ]
+    }
+  }
+}

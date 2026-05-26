@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofModelProviderCallInput",
+  "type": "object",
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "provider": {
+      "type": "string",
+      "enum": [
+        "mock",
+        "local_deterministic",
+        "local_trace",
+        "frontier_http"
+      ]
+    },
+    "provider_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]{1,64}$"
+    },
+    "model_id": {
+      "type": "string",
+      "maxLength": 256
+    },
+    "prompt": {
+      "type": "string",
+      "maxLength": 200000
+    },
+    "system": {
+      "type": "string",
+      "maxLength": 200000
+    },
+    "max_tokens": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 200000
+    },
+    "temperature": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 2
+    },
+    "response_format": {
+      "type": "string",
+      "enum": [
+        "json",
+        "text"
+      ]
+    },
+    "privacy_mode": {
+      "type": "string",
+      "enum": [
+        "hash_only",
+        "redacted",
+        "raw_local"
+      ]
+    },
+    "scenario": {
+      "type": "string",
+      "maxLength": 128
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 120
+    },
+    "retries": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 3
+    },
+    "return_raw": {
+      "type": "boolean"
+    },
+    "max_response_bytes": {
+      "type": "integer",
+      "minimum": 1024,
+      "maximum": 10000000
+    }
+  },
+  "additionalProperties": false
+}

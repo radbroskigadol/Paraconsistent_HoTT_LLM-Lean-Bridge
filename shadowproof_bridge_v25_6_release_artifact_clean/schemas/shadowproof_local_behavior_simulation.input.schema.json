@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofLocalBehaviorSimulationInput",
+  "type": "object",
+  "properties": {
+    "request_id": {"type": "string"},
+    "include_observed": {"type": "boolean"},
+    "mock_lean_command": {"type": "string"}
+  },
+  "additionalProperties": false
+}

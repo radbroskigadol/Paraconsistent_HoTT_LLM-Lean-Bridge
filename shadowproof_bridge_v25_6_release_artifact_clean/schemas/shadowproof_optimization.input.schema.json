@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofOptimizationInput",
+  "type": "object",
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "optimization_context": {
+      "type": "object",
+      "properties": {
+        "company_id": {
+          "type": "string"
+        },
+        "frontier_model_id": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "subfield": {
+          "type": "string"
+        },
+        "task_type": {
+          "type": "string"
+        },
+        "theorem_family": {
+          "type": "string"
+        },
+        "diagnostic_kinds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "user_segment": {
+          "type": "string"
+        },
+        "deployment_stage": {
+          "type": "string"
+        },
+        "policy_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "optimization_action": {
+      "type": "object",
+      "properties": {
+        "repair_strategy": {
+          "type": "string"
+        },
+        "prompt_template": {
+          "type": "string"
+        },
+        "retrieval_profile": {
+          "type": "string"
+        },
+        "token_budget": {
+          "type": "integer"
+        },
+        "deterministic_repair_first": {
+          "type": "boolean"
+        },
+        "require_draft_schema_reminder": {
+          "type": "boolean"
+        },
+        "proof_graph_detail": {
+          "type": "string"
+        },
+        "escalation_model": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "theorem_fingerprint": {
+      "type": "object"
+    },
+    "events_path": {
+      "type": "string"
+    },
+    "policy_path": {
+      "type": "string"
+    },
+    "privacy_mode": {
+      "type": "string",
+      "enum": [
+        "hash_only",
+        "redacted",
+        "raw_local"
+      ]
+    },
+    "learning_enabled": {
+      "type": "boolean"
+    },
+    "exploration_rate": {
+      "type": "number"
+    },
+    "min_evidence": {
+      "type": "integer"
+    }
+  },
+  "additionalProperties": true
+}

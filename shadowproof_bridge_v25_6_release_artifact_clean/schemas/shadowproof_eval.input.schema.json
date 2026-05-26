@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofEvalSuite",
+  "type": "object",
+  "required": [
+    "suite_id",
+    "cases"
+  ],
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "suite_id": {
+      "type": "string"
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "case_id",
+          "kind"
+        ],
+        "properties": {
+          "case_id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "tool": {
+            "type": "string"
+          },
+          "input_file": {
+            "type": "string"
+          },
+          "input": {
+            "type": "object"
+          },
+          "expect_status": {
+            "type": "string"
+          },
+          "expect_lean_status": {
+            "type": "string"
+          },
+          "is_theorem_drift_trap": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

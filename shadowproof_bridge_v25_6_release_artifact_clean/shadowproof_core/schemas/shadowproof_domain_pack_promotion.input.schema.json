@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofDomainPackPromotionInput",
+  "type": "object",
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string"
+    },
+    "registry_path": {
+      "type": "string"
+    },
+    "key": {
+      "type": "string"
+    },
+    "domain": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "target_state": {
+      "type": "string"
+    },
+    "actor": {
+      "type": "string"
+    },
+    "reviewer": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string"
+    },
+    "decision": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "report": {
+      "type": "object"
+    },
+    "report_path": {
+      "type": "string"
+    },
+    "active_dir": {
+      "type": "string"
+    },
+    "backup_dir": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

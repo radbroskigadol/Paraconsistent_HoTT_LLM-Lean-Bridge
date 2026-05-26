@@ -1,0 +1,79 @@
+{
+  "request_id": "shadowhott-eval-example",
+  "suite_id": "shadowhott-smoke-v1",
+  "cases": [
+    {
+      "case_id": "associativity-classical-accept",
+      "input": {
+        "theorem_fingerprint": {
+          "theorem_family": "group_assoc",
+          "objects": ["G : Type u", "[Group G]", "a b c : G"],
+          "conclusion": "(a * b) * c = a * (b * c)",
+          "forbidden_drift": ["CommGroup", "axiom", "sorry"]
+        },
+        "proof_graph": [
+          {
+            "id": "n1",
+            "obstruction": "none",
+            "paths": [
+              {"id": "refl_n1", "source": "n1", "target": "n1", "label": "top", "kind": "refl"},
+              {"id": "tac_n1", "source": "n1", "target": "lean_witness",
+               "label": "top", "kind": "lean_tactic",
+               "witness": "exact mul_assoc a b c"}
+            ]
+          }
+        ],
+        "lean_status": "accepted",
+        "status": "ok",
+        "final_lean_code": "theorem t : (a * b) * c = a * (b * c) := mul_assoc a b c\n"
+      },
+      "expect_verdict": "accept"
+    },
+    {
+      "case_id": "commutativity-drift-rejected",
+      "input": {
+        "theorem_fingerprint": {
+          "theorem_family": "bad_group_commutativity",
+          "conclusion": "a * b = b * a",
+          "forbidden_drift": ["CommGroup", "axiom"]
+        },
+        "proof_graph": [
+          {
+            "id": "n1",
+            "obstruction": "theorem_drift",
+            "paths": [
+              {"id": "refl_n1", "source": "n1", "target": "n1", "label": "top", "kind": "refl"},
+              {"id": "ctr_n1", "source": "n1", "target": "nonabelian",
+               "label": "bottom", "kind": "counterpath",
+               "witness": "Nonabelian groups refute the claim."}
+            ]
+          }
+        ],
+        "lean_status": "rejected",
+        "status": "needs_repair",
+        "final_lean_code": "theorem t : a * b = b * a := by sorry\n"
+      },
+      "expect_verdict": "reject"
+    },
+    {
+      "case_id": "glutty-routes-to-human-review",
+      "input": {
+        "theorem_fingerprint": {"theorem_family": "demo", "conclusion": "demo"},
+        "proof_graph": [
+          {
+            "id": "n1",
+            "obstruction": "none",
+            "paths": [
+              {"id": "refl_n1", "source": "n1", "target": "n1", "label": "top", "kind": "refl"},
+              {"id": "tac_n1", "source": "n1", "target": "ok", "label": "top", "kind": "lean_tactic"},
+              {"id": "ctr_n1", "source": "n1", "target": "ref", "label": "bottom", "kind": "counterpath"}
+            ]
+          }
+        ],
+        "lean_status": "accepted",
+        "status": "ok"
+      },
+      "expect_verdict": "human_review"
+    }
+  ]
+}

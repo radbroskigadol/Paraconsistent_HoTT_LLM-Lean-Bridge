@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofRecordOutcomeInput",
+  "type": "object",
+  "required": [
+    "request_id",
+    "outcome"
+  ],
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "rejected",
+        "improved",
+        "accepted",
+        "unchanged"
+      ]
+    },
+    "theorem_fingerprint": {
+      "type": "object"
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "lean_code": {
+      "type": "string"
+    },
+    "final_lean_code": {
+      "type": "string"
+    },
+    "repair_strategy": {
+      "type": "string"
+    },
+    "patch_kind": {
+      "type": "string"
+    },
+    "memory_path": {
+      "type": "string"
+    },
+    "privacy_mode": {
+      "type": "string",
+      "enum": [
+        "hash_only",
+        "redacted",
+        "raw_local"
+      ]
+    },
+    "learning_enabled": {
+      "type": "boolean"
+    },
+    "metadata": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

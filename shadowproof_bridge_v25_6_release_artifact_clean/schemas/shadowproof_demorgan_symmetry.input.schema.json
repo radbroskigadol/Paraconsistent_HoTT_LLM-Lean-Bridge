@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "shadowproof_demorgan_symmetry input",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "request_id": {
+      "type": "string"
+    }
+  }
+}

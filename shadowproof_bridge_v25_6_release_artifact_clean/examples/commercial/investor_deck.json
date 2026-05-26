@@ -1,0 +1,13 @@
+{
+  "request_id": "investor-deck-example",
+  "stage": "pre_commercial",
+  "audience": "technical_diligence",
+  "include_sections": [
+    "executive_summary",
+    "what_is_actually_built",
+    "claims_boundary",
+    "diligence_index",
+    "outstanding_for_ga",
+    "valuation_assumptions"
+  ]
+}

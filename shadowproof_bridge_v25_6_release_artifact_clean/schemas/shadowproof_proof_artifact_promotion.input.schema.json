@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofProofArtifactPromotionInput",
+  "type": "object",
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "artifact_id": {
+      "type": "string"
+    },
+    "theorem_name": {
+      "type": "string"
+    },
+    "theorem_fingerprint": {
+      "type": "object"
+    },
+    "lean_code": {
+      "type": "string"
+    },
+    "draft_path": {
+      "type": "string"
+    },
+    "registry_path": {
+      "type": "string"
+    },
+    "target_state": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "lean_status": {
+      "type": "string"
+    },
+    "report": {
+      "type": "object"
+    },
+    "report_path": {
+      "type": "string"
+    },
+    "reviewer": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string"
+    },
+    "decision": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "archive_dir": {
+      "type": "string"
+    },
+    "export_dir": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

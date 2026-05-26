@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LeanCheckInput",
+  "type": "object",
+  "required": [
+    "request_id",
+    "lean_code"
+  ],
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "lean_code": {
+      "type": "string"
+    },
+    "target": {
+      "type": "object",
+      "properties": {
+        "system": {
+          "type": "string",
+          "enum": [
+            "lean4"
+          ]
+        },
+        "imports": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "allow_sorry": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "properties": {
+        "timeout_seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 300
+        },
+        "security_level": {
+          "type": "string",
+          "enum": [
+            "conservative",
+            "permissive"
+          ]
+        },
+        "return_code": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

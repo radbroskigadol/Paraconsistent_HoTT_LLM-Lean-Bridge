@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofDomainPackEvalStubInput",
+  "type": "object",
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "pack": {
+      "type": "object"
+    },
+    "path": {
+      "type": "string"
+    },
+    "pack_path": {
+      "type": "string"
+    },
+    "output_path": {
+      "type": "string"
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 500
+    }
+  },
+  "oneOf": [
+    {
+      "required": [
+        "pack"
+      ]
+    },
+    {
+      "required": [
+        "path"
+      ]
+    },
+    {
+      "required": [
+        "pack_path"
+      ]
+    }
+  ],
+  "additionalProperties": false
+}

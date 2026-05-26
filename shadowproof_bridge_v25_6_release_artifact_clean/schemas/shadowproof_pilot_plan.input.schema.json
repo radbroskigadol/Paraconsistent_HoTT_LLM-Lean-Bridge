@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofPilotInput",
+  "type": "object",
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "company_id": {
+      "type": "string"
+    },
+    "pilot_id": {
+      "type": "string"
+    },
+    "target_domains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "model_providers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "storage_backend": {
+      "type": "string"
+    },
+    "retrieval_backend": {
+      "type": "string"
+    },
+    "lean_worker_mode": {
+      "type": "string"
+    },
+    "phase": {
+      "type": "string"
+    },
+    "output_dir": {
+      "type": "string"
+    },
+    "adapter_type": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

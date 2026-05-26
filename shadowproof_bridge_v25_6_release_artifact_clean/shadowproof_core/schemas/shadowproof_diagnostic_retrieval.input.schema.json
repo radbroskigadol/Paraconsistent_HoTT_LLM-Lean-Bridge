@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofDiagnosticRetrievalInput",
+  "type": "object",
+  "required": [
+    "request_id",
+    "theorem_fingerprint",
+    "diagnostics"
+  ],
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "theorem_fingerprint": {
+      "type": "object"
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "final_lean_code": {
+      "type": "string"
+    },
+    "lean_code": {
+      "type": "string"
+    },
+    "domains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "domain_dirs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "index_paths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "retrieval_limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 50
+    },
+    "max_prompt_chars": {
+      "type": "integer",
+      "minimum": 1000,
+      "maximum": 20000
+    },
+    "auto_retrieve": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": true
+}

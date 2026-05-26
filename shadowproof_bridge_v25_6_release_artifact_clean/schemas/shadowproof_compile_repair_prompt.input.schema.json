@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofRepairPromptInput",
+  "type": "object",
+  "required": [
+    "request_id",
+    "theorem_fingerprint",
+    "diagnostics"
+  ],
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "theorem_fingerprint": {
+      "type": "object"
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "final_lean_code": {
+      "type": "string"
+    },
+    "max_prompt_tokens": {
+      "type": "integer",
+      "minimum": 200,
+      "maximum": 4000
+    },
+    "memory_path": {
+      "type": "string"
+    },
+    "privacy_mode": {
+      "type": "string",
+      "enum": [
+        "hash_only",
+        "redacted",
+        "raw_local"
+      ]
+    },
+    "learning_enabled": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": true
+}

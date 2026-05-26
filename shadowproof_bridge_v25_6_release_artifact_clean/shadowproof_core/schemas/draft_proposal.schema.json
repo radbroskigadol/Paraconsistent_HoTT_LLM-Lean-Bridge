@@ -1,0 +1,327 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofDraftProposal",
+  "type": "object",
+  "required": [
+    "proposal_id",
+    "source_language",
+    "target_system",
+    "theorem_name",
+    "imports",
+    "natural_language_theorem",
+    "natural_language_proof",
+    "lean_code",
+    "theorem_fingerprint",
+    "proof_graph",
+    "nl_to_lean_map",
+    "declared_trust"
+  ],
+  "properties": {
+    "proposal_id": {
+      "type": "string"
+    },
+    "source_language": {
+      "type": "string",
+      "enum": [
+        "controlled_math_english",
+        "informal_math_english",
+        "direct_lean"
+      ]
+    },
+    "target_system": {
+      "type": "string",
+      "enum": [
+        "lean4"
+      ]
+    },
+    "theorem_name": {
+      "type": "string"
+    },
+    "imports": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "natural_language_theorem": {
+      "type": "string"
+    },
+    "natural_language_proof": {
+      "type": "string"
+    },
+    "lean_code": {
+      "type": "string"
+    },
+    "theorem_fingerprint": {
+      "type": "object",
+      "required": [
+        "theorem_family",
+        "objects",
+        "assumptions",
+        "conclusion",
+        "forbidden_drift",
+        "source_theorem"
+      ],
+      "properties": {
+        "theorem_family": {
+          "type": "string"
+        },
+        "objects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "conclusion": {
+          "type": "string"
+        },
+        "forbidden_drift": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source_theorem": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "proof_graph": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "source_text",
+          "truth",
+          "falsity",
+          "boundary"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "source_text": {
+            "type": "string"
+          },
+          "truth": {
+            "type": "object",
+            "required": [
+              "claim",
+              "dependencies",
+              "lean_goal"
+            ],
+            "properties": {
+              "claim": {
+                "type": "string"
+              },
+              "dependencies": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "lean_goal": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "falsity": {
+            "type": "object",
+            "required": [
+              "counterconditions",
+              "counterexample_hint"
+            ],
+            "properties": {
+              "counterconditions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "counterexample_hint": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "boundary": {
+            "type": "object",
+            "required": [
+              "ambiguities",
+              "missing_data",
+              "lean_error_excerpt"
+            ],
+            "properties": {
+              "ambiguities": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "missing_data": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "lean_error_excerpt": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "paths": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "source",
+                "target",
+                "label"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                },
+                "target": {
+                  "type": "string"
+                },
+                "label": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "top",
+                        "bottom",
+                        "both",
+                        "neither",
+                        "proof",
+                        "refuted",
+                        "glut",
+                        "gap"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": "string"
+                        },
+                        "truth_coordinate": {
+                          "type": "boolean"
+                        },
+                        "refutation_coordinate": {
+                          "type": "boolean"
+                        }
+                      },
+                      "additionalProperties": true
+                    }
+                  ]
+                },
+                "witness": {
+                  "type": "string"
+                },
+                "kind": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": true
+            },
+            "default": []
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "nl_to_lean_map": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "source_step_id",
+          "source_text",
+          "lean_fragment",
+          "intended_claim",
+          "confidence"
+        ],
+        "properties": {
+          "source_step_id": {
+            "type": "string"
+          },
+          "source_text": {
+            "type": "string"
+          },
+          "lean_fragment": {
+            "type": "string"
+          },
+          "intended_claim": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "declared_trust": {
+      "type": "object",
+      "required": [
+        "uses_sorry",
+        "uses_axioms",
+        "mutates_theorem",
+        "notes"
+      ],
+      "properties": {
+        "uses_sorry": {
+          "type": "boolean"
+        },
+        "uses_axioms": {
+          "type": "boolean"
+        },
+        "mutates_theorem": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

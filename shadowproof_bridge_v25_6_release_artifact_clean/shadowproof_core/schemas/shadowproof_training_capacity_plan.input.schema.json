@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "shadowproof_training_capacity_plan input",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "base_model_params_b": {
+      "type": "number",
+      "minimum": 0.1
+    },
+    "quantization_bits": {
+      "type": "integer",
+      "enum": [
+        2,
+        3,
+        4,
+        8,
+        16
+      ]
+    },
+    "precision": {
+      "type": "string",
+      "enum": [
+        "fp32",
+        "tf32",
+        "fp16",
+        "bf16",
+        "int8",
+        "int4"
+      ]
+    },
+    "optimizer": {
+      "type": "string",
+      "enum": [
+        "none",
+        "sgd",
+        "adamw",
+        "adamw_8bit",
+        "adafactor"
+      ]
+    },
+    "gpu_vram_gb": {
+      "type": "number",
+      "minimum": 1
+    },
+    "activation_overhead_gb": {
+      "type": "number",
+      "minimum": 0
+    },
+    "safety_margin": {
+      "type": "number",
+      "minimum": 0.1,
+      "maximum": 1.0
+    },
+    "domains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "subfields_per_domain": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "arms_per_subfield": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "min_events_per_arm": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "target_policy_versions": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "adapter_geometry": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "hidden_size": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "num_layers": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "target_matrices_per_layer": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "rank": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "include_bias_params": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}
