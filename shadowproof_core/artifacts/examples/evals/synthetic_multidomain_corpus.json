@@ -1,0 +1,2965 @@
+{
+  "request_id": "synthetic_multidomain_v25_7",
+  "suite_id": "synthetic_multidomain_v25_7",
+  "cases": [
+    {
+      "case_id": "nat_refl",
+      "kind": "accepted_proof",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "ok",
+      "expect_lean_status": "accepted",
+      "is_theorem_drift_trap": false,
+      "input": {
+        "request_id": "synthetic:nat_refl",
+        "draft": {
+          "proposal_id": "synthetic-nat_refl",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "nat_refl",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic arithmetic/nat case: n = n.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\ntheorem nat_refl (n : Nat) : n = n := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "arithmetic_nat",
+            "objects": [
+              "n : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "n = n",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic arithmetic/nat case: n = n."
+          },
+          "proof_graph": [
+            {
+              "id": "nat_refl_node",
+              "source_text": "Synthetic arithmetic/nat proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove n = n.",
+                "dependencies": [],
+                "lean_goal": "n = n"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "nat_refl_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "n = n",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "arithmetic/nat",
+            "synthetic": true,
+            "case_id": "nat_refl"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "arithmetic/nat"
+      }
+    },
+    {
+      "case_id": "logic_imp_id",
+      "kind": "accepted_proof",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "ok",
+      "expect_lean_status": "accepted",
+      "is_theorem_drift_trap": false,
+      "input": {
+        "request_id": "synthetic:logic_imp_id",
+        "draft": {
+          "proposal_id": "synthetic-logic_imp_id",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "logic_imp_id",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic logic/propositional case: P → P.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\ntheorem logic_imp_id (P : Prop) : P → P := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "logic_propositional",
+            "objects": [
+              "P : Prop"
+            ],
+            "assumptions": [],
+            "conclusion": "P → P",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic logic/propositional case: P → P."
+          },
+          "proof_graph": [
+            {
+              "id": "logic_imp_id_node",
+              "source_text": "Synthetic logic/propositional proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove P → P.",
+                "dependencies": [],
+                "lean_goal": "P → P"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "logic_imp_id_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "P → P",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "logic/propositional",
+            "synthetic": true,
+            "case_id": "logic_imp_id"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "logic/propositional"
+      }
+    },
+    {
+      "case_id": "list_refl",
+      "kind": "accepted_proof",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "ok",
+      "expect_lean_status": "accepted",
+      "is_theorem_drift_trap": false,
+      "input": {
+        "request_id": "synthetic:list_refl",
+        "draft": {
+          "proposal_id": "synthetic-list_refl",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "list_refl",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic data/list case: xs = xs.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\ntheorem list_refl (xs : List Nat) : xs = xs := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "data_list",
+            "objects": [
+              "xs : List Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "xs = xs",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic data/list case: xs = xs."
+          },
+          "proof_graph": [
+            {
+              "id": "list_refl_node",
+              "source_text": "Synthetic data/list proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove xs = xs.",
+                "dependencies": [],
+                "lean_goal": "xs = xs"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "list_refl_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "xs = xs",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "data/list",
+            "synthetic": true,
+            "case_id": "list_refl"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "data/list"
+      }
+    },
+    {
+      "case_id": "order_refl",
+      "kind": "accepted_proof",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "ok",
+      "expect_lean_status": "accepted",
+      "is_theorem_drift_trap": false,
+      "input": {
+        "request_id": "synthetic:order_refl",
+        "draft": {
+          "proposal_id": "synthetic-order_refl",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "order_refl",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic order/nat case: n ≤ n.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\ntheorem order_refl (n : Nat) : n ≤ n := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "order_nat",
+            "objects": [
+              "n : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "n ≤ n",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic order/nat case: n ≤ n."
+          },
+          "proof_graph": [
+            {
+              "id": "order_refl_node",
+              "source_text": "Synthetic order/nat proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove n ≤ n.",
+                "dependencies": [],
+                "lean_goal": "n ≤ n"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "order_refl_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "n ≤ n",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "order/nat",
+            "synthetic": true,
+            "case_id": "order_refl"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "order/nat"
+      }
+    },
+    {
+      "case_id": "set_elem_refl",
+      "kind": "accepted_proof",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "ok",
+      "expect_lean_status": "accepted",
+      "is_theorem_drift_trap": false,
+      "input": {
+        "request_id": "synthetic:set_elem_refl",
+        "draft": {
+          "proposal_id": "synthetic-set_elem_refl",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "set_elem_refl",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic set/basic case: x = x.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\ntheorem set_elem_refl (x : Nat) : x = x := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "set_basic",
+            "objects": [
+              "x : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "x = x",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic set/basic case: x = x."
+          },
+          "proof_graph": [
+            {
+              "id": "set_elem_refl_node",
+              "source_text": "Synthetic set/basic proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove x = x.",
+                "dependencies": [],
+                "lean_goal": "x = x"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "set_elem_refl_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "x = x",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "set/basic",
+            "synthetic": true,
+            "case_id": "set_elem_refl"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "set/basic"
+      }
+    },
+    {
+      "case_id": "ring_add_refl",
+      "kind": "accepted_proof",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "ok",
+      "expect_lean_status": "accepted",
+      "is_theorem_drift_trap": false,
+      "input": {
+        "request_id": "synthetic:ring_add_refl",
+        "draft": {
+          "proposal_id": "synthetic-ring_add_refl",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "ring_add_refl",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic algebra/ring case: x + 0 = x + 0.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\ntheorem ring_add_refl (R : Type) [Semiring R] (x : R) : x + 0 = x + 0 := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "algebra_ring",
+            "objects": [
+              "R : Type",
+              "[Semiring R]",
+              "x : R"
+            ],
+            "assumptions": [],
+            "conclusion": "x + 0 = x + 0",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic algebra/ring case: x + 0 = x + 0."
+          },
+          "proof_graph": [
+            {
+              "id": "ring_add_refl_node",
+              "source_text": "Synthetic algebra/ring proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove x + 0 = x + 0.",
+                "dependencies": [],
+                "lean_goal": "x + 0 = x + 0"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "ring_add_refl_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "x + 0 = x + 0",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "algebra/ring",
+            "synthetic": true,
+            "case_id": "ring_add_refl"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "algebra/ring"
+      }
+    },
+    {
+      "case_id": "group_assoc_synth",
+      "kind": "accepted_proof",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "ok",
+      "expect_lean_status": "accepted",
+      "is_theorem_drift_trap": false,
+      "input": {
+        "request_id": "synthetic:group_assoc_synth",
+        "draft": {
+          "proposal_id": "synthetic-group_assoc_synth",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "group_assoc_synth",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic algebra/group case: (a * b) * c = a * (b * c).",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\ntheorem group_assoc_synth {G : Type} [Group G] (a b c : G) : (a * b) * c = a * (b * c) := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "algebra_group",
+            "objects": [
+              "G : Type",
+              "[Group G]",
+              "a b c : G"
+            ],
+            "assumptions": [],
+            "conclusion": "(a * b) * c = a * (b * c)",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic algebra/group case: (a * b) * c = a * (b * c)."
+          },
+          "proof_graph": [
+            {
+              "id": "group_assoc_synth_node",
+              "source_text": "Synthetic algebra/group proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove (a * b) * c = a * (b * c).",
+                "dependencies": [],
+                "lean_goal": "(a * b) * c = a * (b * c)"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "group_assoc_synth_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "(a * b) * c = a * (b * c)",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "algebra/group",
+            "synthetic": true,
+            "case_id": "group_assoc_synth"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "algebra/group"
+      }
+    },
+    {
+      "case_id": "topology_self",
+      "kind": "accepted_proof",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "ok",
+      "expect_lean_status": "accepted",
+      "is_theorem_drift_trap": false,
+      "input": {
+        "request_id": "synthetic:topology_self",
+        "draft": {
+          "proposal_id": "synthetic-topology_self",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "topology_self",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic topology/basic case: x = x.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\ntheorem topology_self (X : Type) (x : X) : x = x := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "topology_basic",
+            "objects": [
+              "X : Type",
+              "x : X"
+            ],
+            "assumptions": [],
+            "conclusion": "x = x",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic topology/basic case: x = x."
+          },
+          "proof_graph": [
+            {
+              "id": "topology_self_node",
+              "source_text": "Synthetic topology/basic proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove x = x.",
+                "dependencies": [],
+                "lean_goal": "x = x"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "topology_self_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "x = x",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "topology/basic",
+            "synthetic": true,
+            "case_id": "topology_self"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "topology/basic"
+      }
+    },
+    {
+      "case_id": "category_id",
+      "kind": "accepted_proof",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "ok",
+      "expect_lean_status": "accepted",
+      "is_theorem_drift_trap": false,
+      "input": {
+        "request_id": "synthetic:category_id",
+        "draft": {
+          "proposal_id": "synthetic-category_id",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "category_id",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic category/basic case: x = x.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\ntheorem category_id (C : Type) (x : C) : x = x := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "category_basic",
+            "objects": [
+              "C : Type",
+              "x : C"
+            ],
+            "assumptions": [],
+            "conclusion": "x = x",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic category/basic case: x = x."
+          },
+          "proof_graph": [
+            {
+              "id": "category_id_node",
+              "source_text": "Synthetic category/basic proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove x = x.",
+                "dependencies": [],
+                "lean_goal": "x = x"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "category_id_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "x = x",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "category/basic",
+            "synthetic": true,
+            "case_id": "category_id"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "category/basic"
+      }
+    },
+    {
+      "case_id": "number_theory_self",
+      "kind": "accepted_proof",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "ok",
+      "expect_lean_status": "accepted",
+      "is_theorem_drift_trap": false,
+      "input": {
+        "request_id": "synthetic:number_theory_self",
+        "draft": {
+          "proposal_id": "synthetic-number_theory_self",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "number_theory_self",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic number_theory/basic case: p = p.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\ntheorem number_theory_self (p : Nat) : p = p := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "number_theory_basic",
+            "objects": [
+              "p : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "p = p",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic number_theory/basic case: p = p."
+          },
+          "proof_graph": [
+            {
+              "id": "number_theory_self_node",
+              "source_text": "Synthetic number_theory/basic proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove p = p.",
+                "dependencies": [],
+                "lean_goal": "p = p"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "number_theory_self_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "p = p",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "number_theory/basic",
+            "synthetic": true,
+            "case_id": "number_theory_self"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "number_theory/basic"
+      }
+    },
+    {
+      "case_id": "analysis_real_self",
+      "kind": "accepted_proof",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "ok",
+      "expect_lean_status": "accepted",
+      "is_theorem_drift_trap": false,
+      "input": {
+        "request_id": "synthetic:analysis_real_self",
+        "draft": {
+          "proposal_id": "synthetic-analysis_real_self",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "analysis_real_self",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic analysis/basic case: x = x.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\ntheorem analysis_real_self (x : Nat) : x = x := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "analysis_basic",
+            "objects": [
+              "x : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "x = x",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic analysis/basic case: x = x."
+          },
+          "proof_graph": [
+            {
+              "id": "analysis_real_self_node",
+              "source_text": "Synthetic analysis/basic proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove x = x.",
+                "dependencies": [],
+                "lean_goal": "x = x"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "analysis_real_self_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "x = x",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "analysis/basic",
+            "synthetic": true,
+            "case_id": "analysis_real_self"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "analysis/basic"
+      }
+    },
+    {
+      "case_id": "combinatorics_fin_self",
+      "kind": "accepted_proof",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "ok",
+      "expect_lean_status": "accepted",
+      "is_theorem_drift_trap": false,
+      "input": {
+        "request_id": "synthetic:combinatorics_fin_self",
+        "draft": {
+          "proposal_id": "synthetic-combinatorics_fin_self",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "combinatorics_fin_self",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic combinatorics/basic case: n = n.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\ntheorem combinatorics_fin_self (n : Nat) : n = n := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "combinatorics_basic",
+            "objects": [
+              "n : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "n = n",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic combinatorics/basic case: n = n."
+          },
+          "proof_graph": [
+            {
+              "id": "combinatorics_fin_self_node",
+              "source_text": "Synthetic combinatorics/basic proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove n = n.",
+                "dependencies": [],
+                "lean_goal": "n = n"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "combinatorics_fin_self_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "n = n",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "combinatorics/basic",
+            "synthetic": true,
+            "case_id": "combinatorics_fin_self"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "combinatorics/basic"
+      }
+    },
+    {
+      "case_id": "lean_unknown_identifier",
+      "kind": "lean_rejection",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "needs_repair",
+      "expect_lean_status": "rejected",
+      "is_theorem_drift_trap": false,
+      "input": {
+        "request_id": "synthetic:lean_unknown_identifier",
+        "draft": {
+          "proposal_id": "synthetic-lean_unknown_identifier",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "lean_unknown_identifier",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic algebra/group case: n = n.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\n-- SHADOWPROOF_MOCK_LEAN_UNKNOWN_IDENTIFIER\ntheorem lean_unknown_identifier (n : Nat) : n = n := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "algebra_group",
+            "objects": [
+              "n : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "n = n",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic algebra/group case: n = n."
+          },
+          "proof_graph": [
+            {
+              "id": "lean_unknown_identifier_node",
+              "source_text": "Synthetic algebra/group proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove n = n.",
+                "dependencies": [],
+                "lean_goal": "n = n"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "lean_unknown_identifier_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "n = n",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "algebra/group",
+            "synthetic": true,
+            "case_id": "lean_unknown_identifier"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "algebra/group"
+      }
+    },
+    {
+      "case_id": "lean_type_mismatch",
+      "kind": "lean_rejection",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "needs_repair",
+      "expect_lean_status": "rejected",
+      "is_theorem_drift_trap": false,
+      "input": {
+        "request_id": "synthetic:lean_type_mismatch",
+        "draft": {
+          "proposal_id": "synthetic-lean_type_mismatch",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "lean_type_mismatch",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic arithmetic/nat case: n = n.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\n-- SHADOWPROOF_MOCK_LEAN_TYPE_MISMATCH\ntheorem lean_type_mismatch (n : Nat) : n = n := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "arithmetic_nat",
+            "objects": [
+              "n : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "n = n",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic arithmetic/nat case: n = n."
+          },
+          "proof_graph": [
+            {
+              "id": "lean_type_mismatch_node",
+              "source_text": "Synthetic arithmetic/nat proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove n = n.",
+                "dependencies": [],
+                "lean_goal": "n = n"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "lean_type_mismatch_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "n = n",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "arithmetic/nat",
+            "synthetic": true,
+            "case_id": "lean_type_mismatch"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "arithmetic/nat"
+      }
+    },
+    {
+      "case_id": "lean_unsolved_goals",
+      "kind": "lean_rejection",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "needs_repair",
+      "expect_lean_status": "rejected",
+      "is_theorem_drift_trap": false,
+      "input": {
+        "request_id": "synthetic:lean_unsolved_goals",
+        "draft": {
+          "proposal_id": "synthetic-lean_unsolved_goals",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "lean_unsolved_goals",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic logic/propositional case: n = n.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\n-- SHADOWPROOF_MOCK_LEAN_UNSOLVED_GOALS\ntheorem lean_unsolved_goals (n : Nat) : n = n := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "logic_propositional",
+            "objects": [
+              "n : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "n = n",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic logic/propositional case: n = n."
+          },
+          "proof_graph": [
+            {
+              "id": "lean_unsolved_goals_node",
+              "source_text": "Synthetic logic/propositional proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove n = n.",
+                "dependencies": [],
+                "lean_goal": "n = n"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "lean_unsolved_goals_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "n = n",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "logic/propositional",
+            "synthetic": true,
+            "case_id": "lean_unsolved_goals"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "logic/propositional"
+      }
+    },
+    {
+      "case_id": "lean_missing_import_diag",
+      "kind": "lean_rejection",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "needs_repair",
+      "expect_lean_status": "rejected",
+      "is_theorem_drift_trap": false,
+      "input": {
+        "request_id": "synthetic:lean_missing_import_diag",
+        "draft": {
+          "proposal_id": "synthetic-lean_missing_import_diag",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "lean_missing_import_diag",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic data/list case: n = n.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\n-- SHADOWPROOF_MOCK_LEAN_MISSING_IMPORT\ntheorem lean_missing_import_diag (n : Nat) : n = n := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "data_list",
+            "objects": [
+              "n : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "n = n",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic data/list case: n = n."
+          },
+          "proof_graph": [
+            {
+              "id": "lean_missing_import_diag_node",
+              "source_text": "Synthetic data/list proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove n = n.",
+                "dependencies": [],
+                "lean_goal": "n = n"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "lean_missing_import_diag_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "n = n",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "data/list",
+            "synthetic": true,
+            "case_id": "lean_missing_import_diag"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "data/list"
+      }
+    },
+    {
+      "case_id": "lean_unknown_identifier_order",
+      "kind": "lean_rejection",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "needs_repair",
+      "expect_lean_status": "rejected",
+      "is_theorem_drift_trap": false,
+      "input": {
+        "request_id": "synthetic:lean_unknown_identifier_order",
+        "draft": {
+          "proposal_id": "synthetic-lean_unknown_identifier_order",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "lean_unknown_identifier_order",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic order/nat case: n = n.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\n-- SHADOWPROOF_MOCK_LEAN_UNKNOWN_IDENTIFIER\ntheorem lean_unknown_identifier_order (n : Nat) : n = n := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "order_nat",
+            "objects": [
+              "n : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "n = n",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic order/nat case: n = n."
+          },
+          "proof_graph": [
+            {
+              "id": "lean_unknown_identifier_order_node",
+              "source_text": "Synthetic order/nat proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove n = n.",
+                "dependencies": [],
+                "lean_goal": "n = n"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "lean_unknown_identifier_order_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "n = n",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "order/nat",
+            "synthetic": true,
+            "case_id": "lean_unknown_identifier_order"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "order/nat"
+      }
+    },
+    {
+      "case_id": "lean_type_mismatch_set",
+      "kind": "lean_rejection",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "needs_repair",
+      "expect_lean_status": "rejected",
+      "is_theorem_drift_trap": false,
+      "input": {
+        "request_id": "synthetic:lean_type_mismatch_set",
+        "draft": {
+          "proposal_id": "synthetic-lean_type_mismatch_set",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "lean_type_mismatch_set",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic set/basic case: n = n.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\n-- SHADOWPROOF_MOCK_LEAN_TYPE_MISMATCH\ntheorem lean_type_mismatch_set (n : Nat) : n = n := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "set_basic",
+            "objects": [
+              "n : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "n = n",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic set/basic case: n = n."
+          },
+          "proof_graph": [
+            {
+              "id": "lean_type_mismatch_set_node",
+              "source_text": "Synthetic set/basic proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove n = n.",
+                "dependencies": [],
+                "lean_goal": "n = n"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "lean_type_mismatch_set_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "n = n",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "set/basic",
+            "synthetic": true,
+            "case_id": "lean_type_mismatch_set"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "set/basic"
+      }
+    },
+    {
+      "case_id": "security_sorry",
+      "kind": "security_trap",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "rejected",
+      "expect_lean_status": "not_run",
+      "is_theorem_drift_trap": true,
+      "input": {
+        "request_id": "synthetic:security_sorry",
+        "draft": {
+          "proposal_id": "synthetic-security_sorry",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "security_sorry",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic logic/propositional case: n = n.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\ntheorem security_sorry (n : Nat) : n = n := by\n  sorry\n",
+          "theorem_fingerprint": {
+            "theorem_family": "logic_propositional",
+            "objects": [
+              "n : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "n = n",
+            "forbidden_drift": [
+              "sorry",
+              "axiom"
+            ],
+            "source_theorem": "Synthetic logic/propositional case: n = n."
+          },
+          "proof_graph": [
+            {
+              "id": "security_sorry_node",
+              "source_text": "Synthetic logic/propositional proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove n = n.",
+                "dependencies": [],
+                "lean_goal": "n = n"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "security_sorry_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "sorry",
+              "intended_claim": "n = n",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "logic/propositional",
+            "synthetic": true,
+            "case_id": "security_sorry"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "logic/propositional"
+      }
+    },
+    {
+      "case_id": "security_axiom",
+      "kind": "security_trap",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "rejected",
+      "expect_lean_status": "not_run",
+      "is_theorem_drift_trap": true,
+      "input": {
+        "request_id": "synthetic:security_axiom",
+        "draft": {
+          "proposal_id": "synthetic-security_axiom",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "security_axiom",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic logic/propositional case: n = n.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\naxiom forbidden_fixture : True\ntheorem security_axiom (n : Nat) : n = n := by\n  trivial\n",
+          "theorem_fingerprint": {
+            "theorem_family": "logic_propositional",
+            "objects": [
+              "n : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "n = n",
+            "forbidden_drift": [
+              "sorry",
+              "axiom"
+            ],
+            "source_theorem": "Synthetic logic/propositional case: n = n."
+          },
+          "proof_graph": [
+            {
+              "id": "security_axiom_node",
+              "source_text": "Synthetic logic/propositional proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove n = n.",
+                "dependencies": [],
+                "lean_goal": "n = n"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "security_axiom_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "trivial",
+              "intended_claim": "n = n",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "logic/propositional",
+            "synthetic": true,
+            "case_id": "security_axiom"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "logic/propositional"
+      }
+    },
+    {
+      "case_id": "security_unsafe",
+      "kind": "security_trap",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "error",
+      "expect_lean_status": "not_run",
+      "is_theorem_drift_trap": true,
+      "input": {
+        "request_id": "synthetic:security_unsafe",
+        "draft": {
+          "proposal_id": "synthetic-security_unsafe",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "security_unsafe",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic runtime/io case: n = n.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\nunsafe def unsafe_fixture := 0\ntheorem security_unsafe (n : Nat) : n = n := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "runtime_io",
+            "objects": [
+              "n : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "n = n",
+            "forbidden_drift": [
+              "sorry",
+              "axiom"
+            ],
+            "source_theorem": "Synthetic runtime/io case: n = n."
+          },
+          "proof_graph": [
+            {
+              "id": "security_unsafe_node",
+              "source_text": "Synthetic runtime/io proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove n = n.",
+                "dependencies": [],
+                "lean_goal": "n = n"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "security_unsafe_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "n = n",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "runtime/io",
+            "synthetic": true,
+            "case_id": "security_unsafe"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "runtime/io"
+      }
+    },
+    {
+      "case_id": "security_eval",
+      "kind": "security_trap",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "error",
+      "expect_lean_status": "not_run",
+      "is_theorem_drift_trap": true,
+      "input": {
+        "request_id": "synthetic:security_eval",
+        "draft": {
+          "proposal_id": "synthetic-security_eval",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "security_eval",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic runtime/io case: n = n.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\n#eval IO.println \"blocked\"\ntheorem security_eval (n : Nat) : n = n := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "runtime_io",
+            "objects": [
+              "n : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "n = n",
+            "forbidden_drift": [
+              "sorry",
+              "axiom"
+            ],
+            "source_theorem": "Synthetic runtime/io case: n = n."
+          },
+          "proof_graph": [
+            {
+              "id": "security_eval_node",
+              "source_text": "Synthetic runtime/io proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove n = n.",
+                "dependencies": [],
+                "lean_goal": "n = n"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "security_eval_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "n = n",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "runtime/io",
+            "synthetic": true,
+            "case_id": "security_eval"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "runtime/io"
+      }
+    },
+    {
+      "case_id": "security_import_allowlist",
+      "kind": "security_trap",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "error",
+      "expect_lean_status": "not_run",
+      "is_theorem_drift_trap": true,
+      "input": {
+        "request_id": "synthetic:security_import_allowlist",
+        "draft": {
+          "proposal_id": "synthetic-security_import_allowlist",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "security_import_allowlist",
+          "imports": [
+            "Untrusted.Module"
+          ],
+          "natural_language_theorem": "Synthetic imports/boundary case: n = n.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Untrusted.Module\n\ntheorem security_import_allowlist (n : Nat) : n = n := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "imports_boundary",
+            "objects": [
+              "n : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "n = n",
+            "forbidden_drift": [
+              "sorry",
+              "axiom"
+            ],
+            "source_theorem": "Synthetic imports/boundary case: n = n."
+          },
+          "proof_graph": [
+            {
+              "id": "security_import_allowlist_node",
+              "source_text": "Synthetic imports/boundary proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove n = n.",
+                "dependencies": [],
+                "lean_goal": "n = n"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "security_import_allowlist_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "n = n",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "imports/boundary",
+            "synthetic": true,
+            "case_id": "security_import_allowlist"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "imports/boundary"
+      }
+    },
+    {
+      "case_id": "security_comment_string_block",
+      "kind": "security_trap",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "rejected",
+      "expect_lean_status": "not_run",
+      "is_theorem_drift_trap": true,
+      "input": {
+        "request_id": "synthetic:security_comment_string_block",
+        "draft": {
+          "proposal_id": "synthetic-security_comment_string_block",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "security_comment_string_block",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic parser/security case: n = n.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\ndef marker := \"/-\"\naxiom hidden_after_string_delimiter : True\ndef marker2 := \"-/\"\ntheorem security_comment_string_block (n : Nat) : n = n := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "parser_security",
+            "objects": [
+              "n : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "n = n",
+            "forbidden_drift": [
+              "sorry",
+              "axiom"
+            ],
+            "source_theorem": "Synthetic parser/security case: n = n."
+          },
+          "proof_graph": [
+            {
+              "id": "security_comment_string_block_node",
+              "source_text": "Synthetic parser/security proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove n = n.",
+                "dependencies": [],
+                "lean_goal": "n = n"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "security_comment_string_block_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "n = n",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "parser/security",
+            "synthetic": true,
+            "case_id": "security_comment_string_block"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "parser/security"
+      }
+    },
+    {
+      "case_id": "drift_conclusion_mismatch",
+      "kind": "theorem_drift_trap",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "rejected",
+      "expect_lean_status": "not_run",
+      "is_theorem_drift_trap": true,
+      "input": {
+        "request_id": "synthetic:drift_conclusion_mismatch",
+        "draft": {
+          "proposal_id": "synthetic-drift_conclusion_mismatch",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "drift_conclusion_mismatch",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic theorem_lock/conclusion case: n = n.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\ntheorem drift_conclusion_mismatch (n : Nat) : n = n := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "theorem_lock_conclusion",
+            "objects": [
+              "n : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "n = Nat.succ n",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic theorem_lock/conclusion case: n = n."
+          },
+          "proof_graph": [
+            {
+              "id": "drift_conclusion_mismatch_node",
+              "source_text": "Synthetic theorem_lock/conclusion proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove n = Nat.succ n.",
+                "dependencies": [],
+                "lean_goal": "n = Nat.succ n"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "drift_conclusion_mismatch_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "n = Nat.succ n",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "theorem_lock/conclusion",
+            "synthetic": true,
+            "case_id": "drift_conclusion_mismatch"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "theorem_lock/conclusion"
+      }
+    },
+    {
+      "case_id": "drift_object_missing",
+      "kind": "theorem_drift_trap",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "rejected",
+      "expect_lean_status": "not_run",
+      "is_theorem_drift_trap": true,
+      "input": {
+        "request_id": "synthetic:drift_object_missing",
+        "draft": {
+          "proposal_id": "synthetic-drift_object_missing",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "drift_object_missing",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic theorem_lock/object case: n = n.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\ntheorem drift_object_missing (n : Nat) : n = n := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "theorem_lock_object",
+            "objects": [
+              "zzzz : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "n = n",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic theorem_lock/object case: n = n."
+          },
+          "proof_graph": [
+            {
+              "id": "drift_object_missing_node",
+              "source_text": "Synthetic theorem_lock/object proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove n = n.",
+                "dependencies": [],
+                "lean_goal": "n = n"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "drift_object_missing_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "n = n",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "theorem_lock/object",
+            "synthetic": true,
+            "case_id": "drift_object_missing"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "theorem_lock/object"
+      }
+    },
+    {
+      "case_id": "drift_forbidden_commgroup",
+      "kind": "theorem_drift_trap",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "rejected",
+      "expect_lean_status": "not_run",
+      "is_theorem_drift_trap": true,
+      "input": {
+        "request_id": "synthetic:drift_forbidden_commgroup",
+        "draft": {
+          "proposal_id": "synthetic-drift_forbidden_commgroup",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "drift_forbidden_commgroup",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic theorem_lock/forbidden_token case: a = a.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\ntheorem drift_forbidden_commgroup (G : Type) [CommGroup G] (a : G) : a = a := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "theorem_lock_forbidden_token",
+            "objects": [
+              "G : Type"
+            ],
+            "assumptions": [],
+            "conclusion": "a = a",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd",
+              "CommGroup"
+            ],
+            "source_theorem": "Synthetic theorem_lock/forbidden_token case: a = a."
+          },
+          "proof_graph": [
+            {
+              "id": "drift_forbidden_commgroup_node",
+              "source_text": "Synthetic theorem_lock/forbidden_token proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove a = a.",
+                "dependencies": [],
+                "lean_goal": "a = a"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "drift_forbidden_commgroup_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "a = a",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "theorem_lock/forbidden_token",
+            "synthetic": true,
+            "case_id": "drift_forbidden_commgroup"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "theorem_lock/forbidden_token"
+      }
+    },
+    {
+      "case_id": "drift_declared_mutation",
+      "kind": "theorem_drift_trap",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "rejected",
+      "expect_lean_status": "not_run",
+      "is_theorem_drift_trap": true,
+      "input": {
+        "request_id": "synthetic:drift_declared_mutation",
+        "draft": {
+          "proposal_id": "synthetic-drift_declared_mutation",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "drift_declared_mutation",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic theorem_lock/declared_trust case: n = n.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\ntheorem drift_declared_mutation (n : Nat) : n = n := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "theorem_lock_declared_trust",
+            "objects": [
+              "n : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "n = n",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic theorem_lock/declared_trust case: n = n."
+          },
+          "proof_graph": [
+            {
+              "id": "drift_declared_mutation_node",
+              "source_text": "Synthetic theorem_lock/declared_trust proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove n = n.",
+                "dependencies": [],
+                "lean_goal": "n = n"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "drift_declared_mutation_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "n = n",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": true,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "theorem_lock/declared_trust",
+            "synthetic": true,
+            "case_id": "drift_declared_mutation"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "theorem_lock/declared_trust"
+      }
+    },
+    {
+      "case_id": "drift_header_missing",
+      "kind": "theorem_drift_trap",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "rejected",
+      "expect_lean_status": "not_run",
+      "is_theorem_drift_trap": true,
+      "input": {
+        "request_id": "synthetic:drift_header_missing",
+        "draft": {
+          "proposal_id": "synthetic-drift_header_missing",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "drift_header_missing",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic theorem_lock/header case: n = n.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\ndef drift_header_missing_value : Nat := by\n0\n",
+          "theorem_fingerprint": {
+            "theorem_family": "theorem_lock_header",
+            "objects": [
+              "n : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "n = n",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic theorem_lock/header case: n = n."
+          },
+          "proof_graph": [
+            {
+              "id": "drift_header_missing_node",
+              "source_text": "Synthetic theorem_lock/header proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove n = n.",
+                "dependencies": [],
+                "lean_goal": "n = n"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "drift_header_missing_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "0",
+              "intended_claim": "n = n",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "theorem_lock/header",
+            "synthetic": true,
+            "case_id": "drift_header_missing"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "theorem_lock/header"
+      }
+    },
+    {
+      "case_id": "drift_comment_string_line",
+      "kind": "theorem_drift_trap",
+      "tool": "shadowproof_validate_draft",
+      "expect_status": "rejected",
+      "expect_lean_status": "not_run",
+      "is_theorem_drift_trap": true,
+      "input": {
+        "request_id": "synthetic:drift_comment_string_line",
+        "draft": {
+          "proposal_id": "synthetic-drift_comment_string_line",
+          "source_language": "controlled_math_english",
+          "target_system": "lean4",
+          "theorem_name": "drift_comment_string_line",
+          "imports": [
+            "Mathlib"
+          ],
+          "natural_language_theorem": "Synthetic parser/security case: n = n.",
+          "natural_language_proof": "Synthetic fixture body; mock Lean decides acceptance/rejection by deterministic markers.",
+          "lean_code": "import Mathlib\n\ndef lineMarker := \"--\"\naxiom hidden_after_line_string : True\ntheorem drift_comment_string_line (n : Nat) : n = n := by\n  rfl\n",
+          "theorem_fingerprint": {
+            "theorem_family": "parser_security",
+            "objects": [
+              "n : Nat"
+            ],
+            "assumptions": [],
+            "conclusion": "n = n",
+            "forbidden_drift": [
+              "sorry",
+              "axiom",
+              "unsafe",
+              "#eval",
+              "run_cmd"
+            ],
+            "source_theorem": "Synthetic parser/security case: n = n."
+          },
+          "proof_graph": [
+            {
+              "id": "drift_comment_string_line_node",
+              "source_text": "Synthetic parser/security proof obligation.",
+              "truth": {
+                "claim": "The Lean body is intended to prove n = n.",
+                "dependencies": [],
+                "lean_goal": "n = n"
+              },
+              "falsity": {
+                "counterconditions": [],
+                "counterexample_hint": null
+              },
+              "boundary": {
+                "ambiguities": [],
+                "missing_data": [],
+                "lean_error_excerpt": null
+              }
+            }
+          ],
+          "nl_to_lean_map": [
+            {
+              "source_step_id": "drift_comment_string_line_node",
+              "source_text": "Synthetic fixture body.",
+              "lean_fragment": "rfl",
+              "intended_claim": "n = n",
+              "confidence": "high"
+            }
+          ],
+          "declared_trust": {
+            "uses_sorry": false,
+            "uses_axioms": false,
+            "mutates_theorem": false,
+            "notes": [
+              "synthetic validation fixture"
+            ]
+          },
+          "metadata": {
+            "domain": "parser/security",
+            "synthetic": true,
+            "case_id": "drift_comment_string_line"
+          }
+        },
+        "target": {
+          "system": "lean4",
+          "imports": [
+            "Mathlib"
+          ],
+          "allow_sorry": false
+        },
+        "policy": {
+          "max_iterations": 0,
+          "timeout_seconds": 5,
+          "allow_theorem_mutation": false,
+          "security_level": "conservative",
+          "return_code": false,
+          "return_proof_graph": false
+        }
+      },
+      "metadata": {
+        "domain": "parser/security"
+      }
+    }
+  ]
+}

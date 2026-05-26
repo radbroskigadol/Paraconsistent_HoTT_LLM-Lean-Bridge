@@ -1,0 +1,22 @@
+{
+  "request_id": "capacity-plan-example",
+  "base_model_params_b": 7.0,
+  "quantization_bits": 4,
+  "precision": "bf16",
+  "optimizer": "adamw_8bit",
+  "gpu_vram_gb": 24.0,
+  "activation_overhead_gb": 4.0,
+  "safety_margin": 0.85,
+  "domains": ["algebra", "topology", "logic"],
+  "subfields_per_domain": 4,
+  "arms_per_subfield": 3,
+  "min_events_per_arm": 256,
+  "target_policy_versions": 12,
+  "adapter_geometry": {
+    "hidden_size": 4096,
+    "num_layers": 32,
+    "target_matrices_per_layer": 4,
+    "rank": 16,
+    "include_bias_params": false
+  }
+}

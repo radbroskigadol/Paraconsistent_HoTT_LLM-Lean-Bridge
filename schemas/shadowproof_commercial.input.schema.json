@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ShadowProofCommercialToolInput",
+  "type": "object",
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "tenant_id": {
+      "type": "string"
+    },
+    "user_id": {
+      "type": "string"
+    },
+    "bearer_token": {
+      "type": "string"
+    },
+    "config": {
+      "type": "object"
+    },
+    "limit": {
+      "type": "integer"
+    },
+    "company": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "release_stage": {
+      "type": "string"
+    },
+    "deliverables": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "outstanding_for_ga": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "stage": {
+      "type": "string"
+    },
+    "audience": {
+      "type": "string"
+    },
+    "include_sections": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "output_dir": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

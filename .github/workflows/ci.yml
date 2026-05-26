@@ -1,0 +1,50 @@
+name: shadowproof-ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: mcp/package-lock.json
+      - name: Install package and test dependencies
+        run: python -m pip install --upgrade pip build && python -m pip install -e '.[dev]'
+      - name: Compile Python
+        run: python -m compileall -q shadowproof_core tests
+      - name: Run unit and regression tests
+        run: PYTHONPATH=. python -m pytest tests/ -q
+      - name: Run buyer demo
+        run: bash scripts/run_buyer_demo.sh
+      - name: Run local simulation
+        run: python -m shadowproof_core.cli local-sim examples/local_simulation/request.json
+      - name: Validate no default secrets in deployable configuration
+        run: python scripts/check_no_default_secrets.py
+      - name: Build MCP server
+        working-directory: mcp
+        run: npm ci && npm run build
+      - name: Run wheel smoke test for packaged schemas and CLI validation
+        run: python scripts/wheel_smoke.py
+      - name: Check Dockerfile runtime artifact inclusion
+        run: python - <<'PY'
+from pathlib import Path
+text = Path('deploy/api.Dockerfile').read_text()
+for artifact in ['schemas', 'docs', 'examples', 'scripts', 'lean_project_template']:
+    assert f'COPY {artifact} ./{artifact}' in text
+PY
+      - name: Docker build smoke
+        run: |
+          if command -v docker >/dev/null 2>&1; then
+            docker build -f deploy/api.Dockerfile -t shadowproof-api:ci .
+          else
+            echo "Docker unavailable; skipping local build smoke."
+          fi

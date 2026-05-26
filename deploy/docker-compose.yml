@@ -1,0 +1,103 @@
+# ShadowProof Bridge v25 pilot stack.
+#
+# This compose file is intended for a developer or buyer running a local
+# walkthrough. It is NOT a production deployment template. In particular:
+#   - No TLS termination (front this with nginx/Caddy/cloud LB).
+#   - No secrets manager is bundled; inject credentials through .env, Docker secrets, or your platform secret manager.
+#   - The Lean worker container only has a Lean toolchain after the operator
+#     builds it; the image stub below installs nothing so the bridge will
+#     report lean_status=not_available until you replace the worker image.
+#
+# Required edits before any pilot use:
+#   - rotate SHADOWPROOF_BEARER_TOKENS
+#   - set SHADOWPROOF_POSTGRES_DSN to a real DSN
+#   - decide whether to use the bundled Postgres or an external instance
+#   - replace ./lean-worker.Dockerfile with a real Lean image
+services:
+
+  api:
+    build:
+      context: ..
+      dockerfile: deploy/api.Dockerfile
+    environment:
+      SHADOWPROOF_ENVIRONMENT: production
+      SHADOWPROOF_AUTH_MODE: bearer
+      SHADOWPROOF_TENANT_MODE: single_tenant
+      SHADOWPROOF_BEARER_TOKENS: "${SHADOWPROOF_BEARER_TOKENS:?set bearer tokens through .env or secret manager}"
+      SHADOWPROOF_ENABLE_ADMIN_HTTP: "false"
+      SHADOWPROOF_ALLOWED_FILE_ROOTS: "/app,/tmp/shadowproof_data"
+      SHADOWPROOF_DATA_DIR: "/tmp/shadowproof_data"
+      SHADOWPROOF_QUOTA_MODE: redis
+      SHADOWPROOF_REDIS_URL: "redis://redis:6379/0"
+      SHADOWPROOF_STORAGE_BACKEND: postgres
+      SHADOWPROOF_POSTGRES_DSN: "${SHADOWPROOF_POSTGRES_DSN:?set postgres DSN through .env or secret manager}"
+      SHADOWPROOF_LEAN_WORKER_MODE: http
+      SHADOWPROOF_LEAN_WORKER_URL: "http://lean-worker:9001"
+      SHADOWPROOF_METRICS_ENABLED: "true"
+      SHADOWPROOF_ACCESS_LOG_JSON: "true"
+    ports:
+      - "8765:8765"
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      - postgres
+      - redis
+      - lean-worker
+
+  postgres:
+    image: postgres:16
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      POSTGRES_USER: shadow
+      POSTGRES_PASSWORD: "${SHADOWPROOF_POSTGRES_PASSWORD:?set postgres password through .env or secret manager}"
+      POSTGRES_DB: shadow
+    volumes:
+      - sp_pg:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - sp_redis:/data
+
+  lean-worker:
+    build:
+      context: .
+      dockerfile: lean-worker.Dockerfile
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    expose:
+      - "9001"
+
+  prometheus:
+    image: prom/prometheus:latest
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+
+volumes:
+  sp_pg: {}
+  sp_redis: {}
